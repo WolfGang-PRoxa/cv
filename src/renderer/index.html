@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; frame-src 'self' about: data:">
+  <title>CV Studio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <img class="brand-mark" src="assets/icon.png" alt="">
+        <div><strong>CV Studio</strong><span id="app-version"></span></div>
+      </div>
+      <nav id="nav" class="nav" aria-label="Navigation principale"></nav>
+    </aside>
+    <main class="main">
+      <div id="update-banner" class="update-banner" role="status" hidden></div>
+      <div id="view" class="view"></div>
+    </main>
+  </div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,644 @@
+{
+  "schemaVersion": 1,
+  "revision": 1,
+  "document": {
+    "title": "Camille Martin — CV",
+    "description": "CV d’exemple de CV Studio : Camille Martin, personne fictive.",
+    "lang": "fr",
+    "footerLeft": "",
+    "footerRight": ""
+  },
+  "animations": {
+    "cardArrive": true,
+    "cardArriveDuration": 850,
+    "reveal": "fade-up",
+    "revealDuration": 650,
+    "revealStagger": 65,
+    "tilt": true,
+    "tiltX": 1.6,
+    "tiltY": 2.2,
+    "hover": true,
+    "modal": "depth"
+  },
+  "actions": {
+    "download": true,
+    "theme": true,
+    "defaultTheme": "light"
+  },
+  "hero": {
+    "id": "hero",
+    "photo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NDAiIGhlaWdodD0iNDYyIiB2aWV3Qm94PSIwIDAgNDQwIDQ2MiI+CjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2RiZTRmMyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2I5YzdlMCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDQwIiBoZWlnaHQ9IjQ2MiIgZmlsbD0idXJsKCNnKSIvPgo8Y2lyY2xlIGN4PSIyMjAiIGN5PSIxODAiIHI9Ijg2IiBmaWxsPSIjN2Y5M2I4Ii8+CjxwYXRoIGQ9Ik02MCA0NjJjOC0xMDQgNzYtMTY2IDE2MC0xNjZzMTUyIDYyIDE2MCAxNjZ6IiBmaWxsPSIjN2Y5M2I4Ii8+Cjwvc3ZnPg==",
+    "photoAlt": "Photo de Camille Martin",
+    "firstName": "Camille",
+    "lastName": "Martin",
+    "subtitle": "Étudiant en BUT informatique à Nantes",
+    "contacts": [
+      {
+        "id": "contact-phone",
+        "type": "phone",
+        "value": "06 00 00 00 00",
+        "url": "",
+        "icon": "phone"
+      },
+      {
+        "id": "contact-location",
+        "type": "location",
+        "value": "Nantes",
+        "url": "Nantes, France",
+        "icon": "pin"
+      },
+      {
+        "id": "contact-email",
+        "type": "email",
+        "value": "camille.martin@example.com",
+        "url": "",
+        "icon": "mail"
+      },
+      {
+        "id": "contact-licence",
+        "type": "text",
+        "value": "Permis B",
+        "url": "",
+        "icon": "license"
+      }
+    ]
+  },
+  "zones": {
+    "top": [
+      {
+        "id": "blk-availability",
+        "type": "banner",
+        "icon": "calendar-check",
+        "label": "Disponibilité recherchée",
+        "text": "À la recherche d’un stage de dix semaines à partir d’avril",
+        "animation": "inherit"
+      }
+    ],
+    "main": [
+      {
+        "id": "blk-formations",
+        "type": "timeline",
+        "title": "Formations",
+        "animation": "inherit",
+        "items": [
+          {
+            "id": "item-but",
+            "date": "2024 - 2027",
+            "title": "BUT informatique",
+            "meta": "IUT · Nantes (44)",
+            "details": [
+              {
+                "id": "det-but-1",
+                "text": "Parcours réalisation d’applications"
+              }
+            ]
+          },
+          {
+            "id": "item-bac",
+            "date": "2021 - 2024",
+            "title": "Baccalauréat général, spécialités maths et NSI",
+            "meta": "Lycée · Nantes (44)",
+            "details": []
+          }
+        ]
+      },
+      {
+        "id": "blk-experiences",
+        "type": "timeline",
+        "title": "Expériences professionnelles",
+        "animation": "inherit",
+        "items": [
+          {
+            "id": "item-support",
+            "date": "Été 2026",
+            "title": "Assistant support informatique",
+            "meta": "Entreprise de services · 2 mois",
+            "details": [
+              {
+                "id": "det-support-1",
+                "text": "Préparation de postes de travail et suivi des demandes d’assistance"
+              }
+            ]
+          },
+          {
+            "id": "item-accueil",
+            "date": "Été 2025",
+            "title": "Agent d’accueil saisonnier",
+            "meta": "Office de tourisme · Nantes",
+            "details": [
+              {
+                "id": "det-accueil-1",
+                "text": "Accueil du public, renseignements par téléphone et par e-mail"
+              },
+              {
+                "id": "det-accueil-2",
+                "text": "Tenue des tableaux de fréquentation"
+              }
+            ]
+          },
+          {
+            "id": "item-vendanges",
+            "date": "Septembre 2024",
+            "title": "Vendanges",
+            "meta": "Vignoble nantais",
+            "details": [
+              {
+                "id": "det-vendanges-1",
+                "text": "Travail en équipe en extérieur"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "blk-generales",
+        "type": "timeline",
+        "title": "Expériences générales",
+        "animation": "inherit",
+        "items": [
+          {
+            "id": "item-hackathon",
+            "date": "Mars 2025",
+            "title": "Hackathon étudiant",
+            "meta": "48 heures · Nantes",
+            "details": [
+              {
+                "id": "det-hackathon-1",
+                "text": "Prototype d’application de covoiturage réalisé en équipe de quatre."
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "side": [
+      {
+        "id": "blk-skills",
+        "type": "panel",
+        "title": "Compétences",
+        "animation": "inherit",
+        "components": [
+          {
+            "id": "cmp-skills-list",
+            "type": "bullets",
+            "items": [
+              {
+                "id": "sk-1",
+                "lead": "",
+                "text": "Curieux, autonome, à l’écoute"
+              },
+              {
+                "id": "sk-2",
+                "lead": "",
+                "text": "Organisé et rigoureux dans le suivi des tâches"
+              }
+            ]
+          },
+          {
+            "id": "cmp-skills-divider",
+            "type": "divider"
+          },
+          {
+            "id": "cmp-lang-heading",
+            "type": "subheading",
+            "text": "Langues"
+          },
+          {
+            "id": "cmp-lang-lines",
+            "type": "keyvalues",
+            "items": [
+              {
+                "id": "lang-fr",
+                "key": "Français",
+                "value": "Langue maternelle"
+              },
+              {
+                "id": "lang-en",
+                "key": "Anglais",
+                "value": "Niveau B2"
+              },
+              {
+                "id": "lang-es",
+                "key": "Espagnol",
+                "value": "Niveau A2"
+              }
+            ]
+          }
+        ],
+        "detail": {
+          "id": "detail-skills",
+          "enabled": true,
+          "kicker": "Savoir-être · Langues",
+          "title": "Compétences et langues",
+          "subtitle": "Qualités personnelles et niveaux de langue.",
+          "components": [
+            {
+              "id": "cmp-skills-panels",
+              "type": "infopanels",
+              "items": [
+                {
+                  "id": "ip-qualities",
+                  "icon": "users",
+                  "title": "Qualités personnelles",
+                  "chips": [
+                    {
+                      "id": "q-1",
+                      "text": "Curieux"
+                    },
+                    {
+                      "id": "q-2",
+                      "text": "Autonome"
+                    },
+                    {
+                      "id": "q-3",
+                      "text": "À l’écoute"
+                    },
+                    {
+                      "id": "q-4",
+                      "text": "Organisé"
+                    },
+                    {
+                      "id": "q-5",
+                      "text": "Rigoureux"
+                    }
+                  ],
+                  "lines": [],
+                  "note": ""
+                },
+                {
+                  "id": "ip-languages",
+                  "icon": "book",
+                  "title": "Langues",
+                  "chips": [],
+                  "lines": [
+                    {
+                      "id": "dl-fr",
+                      "key": "Français",
+                      "value": "Langue maternelle"
+                    },
+                    {
+                      "id": "dl-en",
+                      "key": "Anglais",
+                      "value": "B2 · Lu, écrit, parlé"
+                    },
+                    {
+                      "id": "dl-es",
+                      "key": "Espagnol",
+                      "value": "A2 · Notions"
+                    }
+                  ],
+                  "note": ""
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "blk-software",
+        "type": "panel",
+        "title": "Logiciels maîtrisés",
+        "animation": "inherit",
+        "components": [
+          {
+            "id": "cmp-software-tags",
+            "type": "tags",
+            "items": [
+              {
+                "id": "sw-excel",
+                "text": "Excel"
+              },
+              {
+                "id": "sw-word",
+                "text": "Word"
+              },
+              {
+                "id": "sw-powerpoint",
+                "text": "PowerPoint"
+              },
+              {
+                "id": "sw-vscode",
+                "text": "VSCode"
+              },
+              {
+                "id": "sw-intellij",
+                "text": "IntelliJ IDEA"
+              },
+              {
+                "id": "sw-gimp",
+                "text": "Gimp"
+              }
+            ]
+          }
+        ],
+        "detail": {
+          "id": "detail-software",
+          "enabled": true,
+          "kicker": "Outils numériques",
+          "title": "Logiciels maîtrisés",
+          "subtitle": "Les applications de bureautique, de développement et de création.",
+          "components": [
+            {
+              "id": "cmp-software-tiles",
+              "type": "tiles",
+              "items": [
+                {
+                  "id": "tile-excel",
+                  "logo": "excel",
+                  "title": "Microsoft Excel",
+                  "subtitle": "Tableur · Bureautique"
+                },
+                {
+                  "id": "tile-word",
+                  "logo": "word",
+                  "title": "Microsoft Word",
+                  "subtitle": "Traitement de texte"
+                },
+                {
+                  "id": "tile-powerpoint",
+                  "logo": "powerpoint",
+                  "title": "Microsoft PowerPoint",
+                  "subtitle": "Présentations"
+                },
+                {
+                  "id": "tile-vscode",
+                  "logo": "vscode",
+                  "title": "Visual Studio Code",
+                  "subtitle": "Éditeur de code"
+                },
+                {
+                  "id": "tile-intellij",
+                  "logo": "intellij",
+                  "title": "IntelliJ IDEA",
+                  "subtitle": "Éditeur de code"
+                },
+                {
+                  "id": "tile-gimp",
+                  "logo": "gimp",
+                  "title": "GIMP",
+                  "subtitle": "Retouche et édition d’images"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "blk-github",
+        "type": "linkcard",
+        "kicker": "Portfolio",
+        "label": "Portfolio (exemple) ↗",
+        "icon": "github",
+        "url": "https://example.com/",
+        "animation": "inherit",
+        "detail": {
+          "id": "detail-github",
+          "enabled": true,
+          "kicker": "Portfolio · Développement",
+          "title": "Portfolio",
+          "subtitle": "Une sélection de projets personnels fictifs.",
+          "components": [
+            {
+              "id": "cmp-gh-profile",
+              "type": "profile",
+              "icon": "github",
+              "name": "camille-martin",
+              "subtitle": "Profil d’exemple",
+              "url": "https://example.com/",
+              "linkLabel": "Ouvrir le profil"
+            },
+            {
+              "id": "cmp-gh-label",
+              "type": "label",
+              "text": "Projets mis en avant"
+            },
+            {
+              "id": "cmp-gh-projects",
+              "type": "projects",
+              "items": [
+                {
+                  "id": "proj-budget",
+                  "icon": "cube",
+                  "accent": "blue",
+                  "kind": "Application web",
+                  "title": "Budget partagé",
+                  "text": "Application web pour répartir les dépenses d’une colocation : saisie des achats, calcul automatique des remboursements et export des comptes du mois.",
+                  "tags": [
+                    {
+                      "id": "pt-b-1",
+                      "text": "JavaScript"
+                    },
+                    {
+                      "id": "pt-b-2",
+                      "text": "HTML/CSS"
+                    },
+                    {
+                      "id": "pt-b-3",
+                      "text": "SQLite"
+                    }
+                  ],
+                  "url": "https://example.com/",
+                  "linkLabel": "Voir le projet"
+                },
+                {
+                  "id": "proj-quiz",
+                  "icon": "eye-off",
+                  "accent": "violet",
+                  "kind": "Jeu mobile",
+                  "title": "Quiz entre amis",
+                  "text": "Petit jeu de questions pour soirées : création de listes de questions, minuteur, scores par équipe et sauvegarde des parties.",
+                  "tags": [
+                    {
+                      "id": "pt-q-1",
+                      "text": "Kotlin"
+                    },
+                    {
+                      "id": "pt-q-2",
+                      "text": "Android"
+                    },
+                    {
+                      "id": "pt-q-3",
+                      "text": "JSON"
+                    }
+                  ],
+                  "url": "https://example.com/",
+                  "linkLabel": "Voir le projet"
+                }
+              ]
+            },
+            {
+              "id": "cmp-gh-note",
+              "type": "note",
+              "text": "Les projets et les liens de ce CV d’exemple sont fictifs."
+            }
+          ]
+        }
+      },
+      {
+        "id": "blk-pix",
+        "type": "score",
+        "title": "Certification numérique",
+        "score": "480 points",
+        "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0ODAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDgwIDMwMCI+CjxyZWN0IHdpZHRoPSI0ODAiIGhlaWdodD0iMzAwIiByeD0iMjQiIGZpbGw9IiNlZWYyZmIiLz4KPHJlY3QgeD0iMTYiIHk9IjE2IiB3aWR0aD0iNDQ4IiBoZWlnaHQ9IjI2OCIgcng9IjE2IiBmaWxsPSJub25lIiBzdHJva2U9IiM5YWFhZDAiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWRhc2hhcnJheT0iOCA2Ii8+Cjx0ZXh0IHg9IjI0MCIgeT0iMTE4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iU2Vnb2UgVUksIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjMwIiBmaWxsPSIjNGE1YTgwIj5DZXJ0aWZpY2F0aW9uIChleGVtcGxlKTwvdGV4dD4KPHRleHQgeD0iMjQwIiB5PSIxOTAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJTZWdvZSBVSSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNjQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMyZjNmNjYiPjQ4MDwvdGV4dD4KPHRleHQgeD0iMjQwIiB5PSIyMzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJTZWdvZSBVSSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiM2YjdhYTAiPlZpc3VlbCBmYWN0aWNlIMOgIHJlbXBsYWNlcjwvdGV4dD4KPC9zdmc+",
+        "imageAlt": "Visuel factice de certification",
+        "animation": "inherit",
+        "detail": {
+          "id": "detail-pix",
+          "enabled": true,
+          "kicker": "Certification numérique",
+          "title": "Certification numérique",
+          "subtitle": "Justificatif et score (exemple).",
+          "components": [
+            {
+              "id": "cmp-pix-score",
+              "type": "score",
+              "label": "Certification numérique",
+              "value": "480 points"
+            },
+            {
+              "id": "cmp-pix-image",
+              "type": "image",
+              "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0ODAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDgwIDMwMCI+CjxyZWN0IHdpZHRoPSI0ODAiIGhlaWdodD0iMzAwIiByeD0iMjQiIGZpbGw9IiNlZWYyZmIiLz4KPHJlY3QgeD0iMTYiIHk9IjE2IiB3aWR0aD0iNDQ4IiBoZWlnaHQ9IjI2OCIgcng9IjE2IiBmaWxsPSJub25lIiBzdHJva2U9IiM5YWFhZDAiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWRhc2hhcnJheT0iOCA2Ii8+Cjx0ZXh0IHg9IjI0MCIgeT0iMTE4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iU2Vnb2UgVUksIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjMwIiBmaWxsPSIjNGE1YTgwIj5DZXJ0aWZpY2F0aW9uIChleGVtcGxlKTwvdGV4dD4KPHRleHQgeD0iMjQwIiB5PSIxOTAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJTZWdvZSBVSSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNjQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMyZjNmNjYiPjQ4MDwvdGV4dD4KPHRleHQgeD0iMjQwIiB5PSIyMzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJTZWdvZSBVSSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiM2YjdhYTAiPlZpc3VlbCBmYWN0aWNlIMOgIHJlbXBsYWNlcjwvdGV4dD4KPC9zdmc+",
+              "alt": "Visuel factice de certification"
+            }
+          ]
+        }
+      },
+      {
+        "id": "blk-interests",
+        "type": "panel",
+        "title": "Intérêts",
+        "animation": "inherit",
+        "components": [
+          {
+            "id": "cmp-interests-list",
+            "type": "bullets",
+            "items": [
+              {
+                "id": "int-sports",
+                "lead": "Sports :",
+                "text": "Course à pied, escalade"
+              },
+              {
+                "id": "int-dev",
+                "lead": "Informatique :",
+                "text": "petits jeux, automatisation"
+              },
+              {
+                "id": "int-benevole",
+                "lead": "",
+                "text": "Bénévole dans une association de quartier"
+              }
+            ]
+          }
+        ],
+        "detail": {
+          "id": "detail-interests",
+          "enabled": true,
+          "kicker": "En dehors des études",
+          "title": "Centres d’intérêt",
+          "subtitle": "Sports, projets informatiques et engagement associatif.",
+          "components": [
+            {
+              "id": "cmp-interest-cards",
+              "type": "cards",
+              "items": [
+                {
+                  "id": "card-sports",
+                  "icon": "ball",
+                  "title": "Sports",
+                  "text": "Deux pratiques régulières depuis le lycée.",
+                  "wide": false,
+                  "timeline": [
+                    {
+                      "id": "sp-run",
+                      "period": "Depuis 2020",
+                      "label": "Course à pied"
+                    },
+                    {
+                      "id": "sp-climb",
+                      "period": "Depuis 2023",
+                      "label": "Escalade"
+                    }
+                  ],
+                  "pills": [],
+                  "entries": []
+                },
+                {
+                  "id": "card-dev",
+                  "icon": "code",
+                  "title": "Projets informatiques",
+                  "text": "Création de petits jeux et de scripts pour automatiser les tâches du quotidien.",
+                  "wide": false,
+                  "timeline": [],
+                  "pills": [
+                    {
+                      "id": "pill-games",
+                      "text": "Jeux"
+                    },
+                    {
+                      "id": "pill-scripts",
+                      "text": "Scripts"
+                    }
+                  ],
+                  "entries": []
+                },
+                {
+                  "id": "card-volunteer",
+                  "icon": "user-plus",
+                  "title": "Bénévolat associatif",
+                  "text": "Bénévole pour une **association de quartier**, sur ses événements annuels.",
+                  "wide": true,
+                  "timeline": [],
+                  "pills": [],
+                  "entries": [
+                    {
+                      "id": "vol-fete",
+                      "title": "Fête de quartier",
+                      "badge": "Depuis 2023 · en cours",
+                      "text": "Installation, buvette et rangement le jour de la fête.",
+                      "pills": [
+                        {
+                          "id": "fete-2023",
+                          "text": "2023"
+                        },
+                        {
+                          "id": "fete-2024",
+                          "text": "2024"
+                        },
+                        {
+                          "id": "fete-2025",
+                          "text": "2025"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "vol-course",
+                      "title": "Course solidaire",
+                      "badge": "2022 – 2024",
+                      "text": "Ravitaillement des coureurs sur trois éditions.",
+                      "pills": [
+                        {
+                          "id": "course-2022",
+                          "text": "Mai 2022"
+                        },
+                        {
+                          "id": "course-2023",
+                          "text": "Mai 2023"
+                        },
+                        {
+                          "id": "course-2024",
+                          "text": "Mai 2024"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
