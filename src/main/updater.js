@@ -36,11 +36,13 @@ function configure() {
   autoUpdater.autoDownload = true;
   autoUpdater.autoInstallOnAppQuit = true;
   autoUpdater.on('checking-for-update', () => emit({ state: 'checking' }));
-  autoUpdater.on('update-available', info => emit({ state: 'available', version: info.version }));
+  autoUpdater.on('update-available', (info) => emit({ state: 'available', version: info.version }));
   autoUpdater.on('update-not-available', () => emit({ state: 'up-to-date' }));
-  autoUpdater.on('download-progress', progress => emit({ state: 'downloading', percent: Math.round(progress.percent) }));
-  autoUpdater.on('update-downloaded', info => emit({ state: 'downloaded', version: info.version }));
-  autoUpdater.on('error', error => emit({ state: 'error', message: shortMessage(error) }));
+  autoUpdater.on('download-progress', (progress) =>
+    emit({ state: 'downloading', percent: Math.round(progress.percent) }),
+  );
+  autoUpdater.on('update-downloaded', (info) => emit({ state: 'downloaded', version: info.version }));
+  autoUpdater.on('error', (error) => emit({ state: 'error', message: shortMessage(error) }));
 }
 
 export function initUpdater(send) {
@@ -53,7 +55,10 @@ export function getUpdateStatus() {
 
 export async function checkForUpdates() {
   if (!app.isPackaged) {
-    emit({ state: 'unavailable', message: 'Les mises à jour ne concernent que la version installée de l’application.' });
+    emit({
+      state: 'unavailable',
+      message: 'Les mises à jour ne concernent que la version installée de l’application.',
+    });
     return lastStatus;
   }
   configure();

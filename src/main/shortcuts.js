@@ -28,7 +28,10 @@ const LOCATIONS = [
   {
     id: 'startMenu',
     label: 'Menu Démarrer',
-    dir: () => (SANDBOX ? path.join(SANDBOX, 'Programs') : path.join(app.getPath('appData'), 'Microsoft', 'Windows', 'Start Menu', 'Programs')),
+    dir: () =>
+      SANDBOX
+        ? path.join(SANDBOX, 'Programs')
+        : path.join(app.getPath('appData'), 'Microsoft', 'Windows', 'Start Menu', 'Programs'),
     // Les programmes sont souvent rangés dans un sous-dossier du menu Démarrer.
     depth: 1,
   },
@@ -38,19 +41,19 @@ const LOCATIONS = [
 
 const linkIo = SANDBOX
   ? {
-    read: async file => JSON.parse(await fs.readFile(file, 'utf8')),
-    write: async (file, options) => {
-      await fs.mkdir(path.dirname(file), { recursive: true });
-      await fs.writeFile(file, JSON.stringify(options, null, 2), 'utf8');
-      return true;
-    },
-    remove: file => fs.rm(file),
-  }
+      read: async (file) => JSON.parse(await fs.readFile(file, 'utf8')),
+      write: async (file, options) => {
+        await fs.mkdir(path.dirname(file), { recursive: true });
+        await fs.writeFile(file, JSON.stringify(options, null, 2), 'utf8');
+        return true;
+      },
+      remove: (file) => fs.rm(file),
+    }
   : {
-    read: async file => shell.readShortcutLink(file),
-    write: async (file, options, operation) => shell.writeShortcutLink(file, operation, options),
-    remove: file => shell.trashItem(file),
-  };
+      read: async (file) => shell.readShortcutLink(file),
+      write: async (file, options, operation) => shell.writeShortcutLink(file, operation, options),
+      remove: (file) => shell.trashItem(file),
+    };
 
 export function isSupported() {
   return process.platform === 'win32' || Boolean(SANDBOX);
@@ -105,8 +108,9 @@ async function listLinks(dir, depth, prefix = '') {
   const files = [];
   for (const entry of entries) {
     const relative = path.join(prefix, entry.name);
-    if (entry.isDirectory() && depth > 0) files.push(...await listLinks(dir, depth - 1, relative));
-    else if (entry.isFile() && /\.lnk$/i.test(entry.name) && relative.toLowerCase() !== SHORTCUT_FILE.toLowerCase()) files.push(relative);
+    if (entry.isDirectory() && depth > 0) files.push(...(await listLinks(dir, depth - 1, relative)));
+    else if (entry.isFile() && /\.lnk$/i.test(entry.name) && relative.toLowerCase() !== SHORTCUT_FILE.toLowerCase())
+      files.push(relative);
   }
   return files;
 }
@@ -141,7 +145,7 @@ async function inspect(location) {
 }
 
 function findLocation(id) {
-  const location = LOCATIONS.find(item => item.id === id);
+  const location = LOCATIONS.find((item) => item.id === id);
   if (!location) throw new Error('Emplacement de raccourci inconnu.');
   return location;
 }

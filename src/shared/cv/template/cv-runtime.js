@@ -15,20 +15,23 @@
   const revealItems = document.querySelectorAll('.reveal');
   const revealStagger = Number(settings.revealStagger || 65);
   if ('IntersectionObserver' in window && settings.reveal !== 'none') {
-    const observer = new IntersectionObserver((entries, currentObserver) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          currentObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12, rootMargin: '0px 0px -24px 0px' });
+    const observer = new IntersectionObserver(
+      (entries, currentObserver) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            currentObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -24px 0px' },
+    );
     revealItems.forEach((item, index) => {
       item.style.transitionDelay = `${Math.min(index % 4, 3) * revealStagger}ms`;
       observer.observe(item);
     });
   } else {
-    revealItems.forEach(item => item.classList.add('is-visible'));
+    revealItems.forEach((item) => item.classList.add('is-visible'));
   }
 
   // Copie du téléphone et de l'adresse e-mail avec retour visuel.
@@ -49,7 +52,7 @@
     if (!copied) throw new Error('Copie indisponible');
   }
 
-  document.querySelectorAll('.copy-button').forEach(button => {
+  document.querySelectorAll('.copy-button').forEach((button) => {
     const restingLabel = button.getAttribute('aria-label');
     button.addEventListener('click', async () => {
       const feedback = button.querySelector('.copy-feedback');
@@ -88,7 +91,9 @@
       moonIcon.hidden = isDark;
       sunIcon.hidden = !isDark;
       if (save) {
-        try { localStorage.setItem('cv-theme', isDark ? 'dark' : 'light'); } catch (error) {}
+        try {
+          localStorage.setItem('cv-theme', isDark ? 'dark' : 'light');
+        } catch (error) {}
       }
     };
     setTheme(root.dataset.theme === 'dark' ? 'dark' : 'light', false);
@@ -102,7 +107,9 @@
   // Réservée aux souris (pas au tactile) et désactivée si l'utilisateur réduit les animations.
   const resumeCard = document.querySelector('.resume');
   if (resumeCard && settings.tilt !== 'off') {
-    const tiltQuery = window.matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
+    const tiltQuery = window.matchMedia(
+      '(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)',
+    );
     const TILT_MAX_X = Number(settings.tiltX || 1.6); // degrés : bascule haut / bas
     const TILT_MAX_Y = Number(settings.tiltY || 2.2); // degrés : bascule gauche / droite
     const tiltTarget = { x: 0, y: 0 };
@@ -113,7 +120,7 @@
     let tiltLastTime = 0;
     let tiltReady = false; // attend la fin de l'animation d'arrivée de la carte
 
-    const clamp01 = value => Math.min(Math.max(value, 0), 1);
+    const clamp01 = (value) => Math.min(Math.max(value, 0), 1);
 
     const updateTiltTarget = () => {
       tiltTarget.x = tiltTarget.y = 0;
@@ -167,7 +174,7 @@
       else requestTilt();
     }
 
-    resumeCard.addEventListener('pointermove', event => {
+    resumeCard.addEventListener('pointermove', (event) => {
       if (event.pointerType !== 'mouse') return;
       tiltPointer = { x: event.clientX, y: event.clientY };
       requestTilt();
@@ -177,7 +184,13 @@
       requestTilt();
     });
     // Au défilement, la souris reste immobile mais la carte bouge sous elle.
-    window.addEventListener('scroll', () => { if (tiltPointer) requestTilt(); }, { passive: true });
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (tiltPointer) requestTilt();
+      },
+      { passive: true },
+    );
     tiltQuery.addEventListener('change', requestTilt);
 
     const enableTilt = () => {
@@ -185,7 +198,7 @@
       tiltReady = true;
       requestTilt();
     };
-    resumeCard.addEventListener('animationend', event => {
+    resumeCard.addEventListener('animationend', (event) => {
       if (event.target === resumeCard) enableTilt();
     });
     window.setTimeout(enableTilt, settings.cardArrive === 'off' ? 0 : 1000);
@@ -204,7 +217,7 @@
     let activeDetailTrigger = null;
     let modalCloseTimer = null;
 
-    const openDetail = trigger => {
+    const openDetail = (trigger) => {
       const template = document.getElementById(`detail-${trigger.dataset.detail}`);
       if (!template) return;
       window.clearTimeout(modalCloseTimer);
@@ -215,7 +228,9 @@
       detailSubtitle.textContent = template.dataset.subtitle || '';
       detailSubtitle.hidden = !template.dataset.subtitle;
       detailBody.replaceChildren(template.content.cloneNode(true));
-      document.querySelectorAll('[data-detail]').forEach(card => card.setAttribute('aria-expanded', String(card === trigger)));
+      document
+        .querySelectorAll('[data-detail]')
+        .forEach((card) => card.setAttribute('aria-expanded', String(card === trigger)));
       detailModal.setAttribute('aria-hidden', 'false');
       detailModal.classList.add('is-open');
       document.body.classList.add('modal-open');
@@ -227,7 +242,7 @@
       detailModal.classList.remove('is-open');
       detailModal.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('modal-open');
-      document.querySelectorAll('[data-detail]').forEach(card => card.setAttribute('aria-expanded', 'false'));
+      document.querySelectorAll('[data-detail]').forEach((card) => card.setAttribute('aria-expanded', 'false'));
       const triggerToRestore = activeDetailTrigger;
       activeDetailTrigger = null;
       modalCloseTimer = window.setTimeout(() => {
@@ -236,14 +251,14 @@
       }, 360);
     };
 
-    document.querySelectorAll('[data-detail]').forEach(card => {
-      card.addEventListener('click', event => {
+    document.querySelectorAll('[data-detail]').forEach((card) => {
+      card.addEventListener('click', (event) => {
         if (root.classList.contains('cv-preview-select')) return;
         // Les éventuels contrôles placés dans une carte gardent leur propre comportement.
         if (event.target.closest('a, button, input, select, textarea')) return;
         openDetail(card);
       });
-      card.addEventListener('keydown', event => {
+      card.addEventListener('keydown', (event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
           openDetail(card);
@@ -252,18 +267,19 @@
     });
     detailClose.addEventListener('click', closeDetail);
     detailBack.addEventListener('click', closeDetail);
-    detailModal.addEventListener('click', event => {
+    detailModal.addEventListener('click', (event) => {
       if (event.target === detailModal) closeDetail();
     });
-    detailDialog.addEventListener('keydown', event => {
+    detailDialog.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
         event.preventDefault();
         closeDetail();
         return;
       }
       if (event.key === 'Tab') {
-        const focusable = [...detailDialog.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')]
-          .filter(el => !el.hasAttribute('hidden'));
+        const focusable = [
+          ...detailDialog.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'),
+        ].filter((el) => !el.hasAttribute('hidden'));
         if (!focusable.length) return;
         const first = focusable[0];
         const last = focusable[focusable.length - 1];
@@ -278,7 +294,7 @@
     });
 
     // Aperçu de l'éditeur : ouverture d'une fiche détaillée à la demande.
-    window.cvOpenDetail = key => {
+    window.cvOpenDetail = (key) => {
       const trigger = document.querySelector(`[data-detail="${key}"]`);
       if (trigger) openDetail(trigger);
     };
@@ -294,14 +310,18 @@
   // défilement entre deux rendus et permet de sélectionner un élément.
   // ------------------------------------------------------------------
   if (root.classList.contains('cv-preview')) {
-    const post = message => window.parent.postMessage({ source: 'cv-preview', ...message }, '*');
+    const post = (message) => window.parent.postMessage({ source: 'cv-preview', ...message }, '*');
     const initialScroll = Number(settings.initialScroll || 0);
     if (initialScroll) window.scrollTo(0, initialScroll);
     let scrollTimer = null;
-    window.addEventListener('scroll', () => {
-      window.clearTimeout(scrollTimer);
-      scrollTimer = window.setTimeout(() => post({ type: 'scroll', y: window.scrollY }), 60);
-    }, { passive: true });
+    window.addEventListener(
+      'scroll',
+      () => {
+        window.clearTimeout(scrollTimer);
+        scrollTimer = window.setTimeout(() => post({ type: 'scroll', y: window.scrollY }), 60);
+      },
+      { passive: true },
+    );
 
     const focusId = settings.focusId;
     if (focusId) {
@@ -312,15 +332,19 @@
       }
     }
 
-    document.addEventListener('click', event => {
-      if (!root.classList.contains('cv-preview-select')) return;
-      const target = event.target.closest('[data-cv-id]');
-      event.preventDefault();
-      event.stopPropagation();
-      if (target) post({ type: 'select', id: target.dataset.cvId });
-    }, true);
+    document.addEventListener(
+      'click',
+      (event) => {
+        if (!root.classList.contains('cv-preview-select')) return;
+        const target = event.target.closest('[data-cv-id]');
+        event.preventDefault();
+        event.stopPropagation();
+        if (target) post({ type: 'select', id: target.dataset.cvId });
+      },
+      true,
+    );
 
-    window.addEventListener('message', event => {
+    window.addEventListener('message', (event) => {
       const data = event.data || {};
       if (data.type === 'select-mode') root.classList.toggle('cv-preview-select', Boolean(data.enabled));
       if (data.type === 'open-detail' && window.cvOpenDetail) window.cvOpenDetail(data.key);

@@ -36,7 +36,7 @@ export function sanitizeBounds(bounds) {
     width: Math.max(MIN_WIDTH, Math.round(Number(bounds.width))),
     height: Math.max(MIN_HEIGHT, Math.round(Number(bounds.height))),
   };
-  if (Object.values(rect).some(value => !Number.isFinite(value))) return null;
+  if (Object.values(rect).some((value) => !Number.isFinite(value))) return null;
   const visible = screen.getAllDisplays().reduce((sum, display) => sum + intersectionArea(rect, display.workArea), 0);
   return visible >= rect.width * rect.height * 0.3 ? rect : null;
 }

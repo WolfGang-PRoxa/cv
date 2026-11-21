@@ -68,7 +68,12 @@ export async function init(windowGetter) {
       setStatus({ mode: 'folder', folder: sync.folder, state: 'ok', error: null });
     } else {
       // Dossier indisponible (disque débranché, service arrêté) : les données locales sont utilisées.
-      setStatus({ mode: 'folder', folder: sync.folder, state: 'error', error: `dossier introuvable : ${sync.folder}. Les données de ce poste sont utilisées en attendant.` });
+      setStatus({
+        mode: 'folder',
+        folder: sync.folder,
+        state: 'error',
+        error: `dossier introuvable : ${sync.folder}. Les données de ce poste sont utilisées en attendant.`,
+      });
     }
   } else if (sync.mode === 'gist' && sync.gistId && sync.key) {
     setStatus({ mode: 'gist', login: sync.login || null });
@@ -85,7 +90,8 @@ async function protect(buffer) {
 }
 
 async function reveal(stored) {
-  if (stored?.startsWith('enc:')) return Buffer.from((await safeStorage.decryptStringAsync(Buffer.from(stored.slice(4), 'base64'))).result, 'base64');
+  if (stored?.startsWith('enc:'))
+    return Buffer.from((await safeStorage.decryptStringAsync(Buffer.from(stored.slice(4), 'base64'))).result, 'base64');
   if (stored?.startsWith('raw:')) return Buffer.from(stored.slice(4), 'base64');
   throw new Error('clé de synchronisation absente : réactiver la synchronisation.');
 }
@@ -134,7 +140,8 @@ export async function chooseFolder() {
       cancelId: 1,
       title: 'Données déjà présentes',
       message: 'Ce dossier contient déjà des données CV Studio, sans doute venues d’un autre poste.',
-      detail: 'L’application les utilisera. Les données actuelles de ce poste restent dans le dossier de l’application et réapparaissent si la synchronisation est désactivée.',
+      detail:
+        'L’application les utilisera. Les données actuelles de ce poste restent dans le dossier de l’application et réapparaissent si la synchronisation est désactivée.',
     });
     if (choice.response !== 0) return { canceled: true, status };
   } else if (!existing) {
@@ -153,7 +160,10 @@ export async function chooseFolder() {
 
 async function requireToken() {
   const { token } = await resolveToken();
-  if (!token) throw new Error('aucun jeton GitHub : en enregistrer un dans « Publication sur GitHub », ou se connecter avec GitHub CLI (gh auth login).');
+  if (!token)
+    throw new Error(
+      'aucun jeton GitHub : en enregistrer un dans « Publication sur GitHub », ou se connecter avec GitHub CLI (gh auth login).',
+    );
   return token;
 }
 
@@ -167,7 +177,7 @@ function gistError(error) {
 async function findGist(token) {
   for (let page = 1; page <= 10; page += 1) {
     const gists = await request(token, 'GET', `/gists?per_page=100&page=${page}`);
-    const found = gists.find(gist => gist.files?.[MANIFEST]);
+    const found = gists.find((gist) => gist.files?.[MANIFEST]);
     // La liste ne donne pas le contenu des fichiers : le Gist complet est relu.
     if (found) return request(token, 'GET', `/gists/${found.id}`);
     if (gists.length < 100) return null;
@@ -178,7 +188,9 @@ async function findGist(token) {
 async function fileContent(token, file) {
   if (!file.truncated && typeof file.content === 'string') return file.content;
   // Fichier volumineux : le contenu complet est lu à son adresse brute.
-  const response = await fetch(file.raw_url, { headers: { Authorization: `Bearer ${token}`, 'User-Agent': `CV-Studio/${app.getVersion()}` } });
+  const response = await fetch(file.raw_url, {
+    headers: { Authorization: `Bearer ${token}`, 'User-Agent': `CV-Studio/${app.getVersion()}` },
+  });
   if (!response.ok) throw new Error(`lecture du Gist impossible (${response.status}).`);
   return response.text();
 }
@@ -216,7 +228,13 @@ export async function enableGist(passphrase) {
     key = await deriveKey(secret, salt);
     const manifest = { app: 'CV Studio', format: 1, kdf: KDF, salt, check: seal(key, { check: 'cv-studio' }) };
     try {
-      gist = await request(token, 'POST', '/gists', { body: { description: DESCRIPTION, public: false, files: { [MANIFEST]: { content: JSON.stringify(manifest, null, 2) } } } });
+      gist = await request(token, 'POST', '/gists', {
+        body: {
+          description: DESCRIPTION,
+          public: false,
+          files: { [MANIFEST]: { content: JSON.stringify(manifest, null, 2) } },
+        },
+      });
     } catch (error) {
       throw new Error(gistError(error));
     }
@@ -224,7 +242,9 @@ export async function enableGist(passphrase) {
   // Retour éventuel du mode dossier : les données redeviennent celles du dossier de l'application.
   if (status.mode === 'folder') await leaveFolder();
   await storage.writeSyncState(null);
-  await storage.writeSettings({ sync: { mode: 'gist', folder: '', gistId: gist.id, salt, key: await protect(key), login } });
+  await storage.writeSettings({
+    sync: { mode: 'gist', folder: '', gistId: gist.id, salt, key: await protect(key), login },
+  });
   setStatus({ mode: 'gist', login, folder: '', state: 'idle', error: null, lastSync: null });
   startPeriodic();
   await syncNow();
@@ -267,7 +287,10 @@ export function notifyLocalChange() {
 }
 
 export function notifyFocus() {
-  if (status.mode === 'folder') { dataChanged(); return; }
+  if (status.mode === 'folder') {
+    dataChanged();
+    return;
+  }
   if (status.mode !== 'gist' || Date.now() - lastFocusSync < FOCUS_INTERVAL) return;
   lastFocusSync = Date.now();
   syncNow();
@@ -325,8 +348,11 @@ async function gistSync(sync) {
   const local = Object.fromEntries(Object.entries(localItems).map(([itemKey, value]) => [itemKey, hashValue(value)]));
 
   // Données distantes : déchiffrées seulement si le Gist a changé depuis la dernière synchronisation.
-  const gist = await request(token, 'GET', `/gists/${sync.gistId}`).catch(error => {
-    if (error?.status === 404) throw new Error('Gist de synchronisation introuvable (supprimé ?) : désactiver puis réactiver la synchronisation.');
+  const gist = await request(token, 'GET', `/gists/${sync.gistId}`).catch((error) => {
+    if (error?.status === 404)
+      throw new Error(
+        'Gist de synchronisation introuvable (supprimé ?) : désactiver puis réactiver la synchronisation.',
+      );
     throw error;
   });
   const version = gist.history?.[0]?.version || null;
@@ -405,7 +431,7 @@ function conflictCopy(cv) {
 }
 
 async function keepLocalBase(localBase, remoteBase) {
-  const when = value => (value?.savedAt ? new Date(value.savedAt).toLocaleString('fr-FR') : 'date inconnue');
+  const when = (value) => (value?.savedAt ? new Date(value.savedAt).toLocaleString('fr-FR') : 'date inconnue');
   const choice = await showDialog('showMessageBox', {
     type: 'question',
     buttons: ['Garder la version de ce poste', 'Garder la version de l’autre poste'],
@@ -418,7 +444,10 @@ async function keepLocalBase(localBase, remoteBase) {
   });
   const keepLocal = choice.response === 0;
   const discarded = keepLocal ? remoteBase : localBase;
-  const file = path.join(storage.getAppDataDir(), `base-ecartee-${new Date().toISOString().replace(/[:.]/g, '-')}.json`);
+  const file = path.join(
+    storage.getAppDataDir(),
+    `base-ecartee-${new Date().toISOString().replace(/[:.]/g, '-')}.json`,
+  );
   await fs.promises.writeFile(file, JSON.stringify(discarded, null, 2), 'utf8');
   return keepLocal;
 }

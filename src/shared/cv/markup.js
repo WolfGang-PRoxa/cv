@@ -27,6 +27,8 @@ export function plain(value) {
 
 /** Version texte (sans balisage) pour les libellés d'accessibilité et l'éditeur. */
 export function textOnly(value) {
-  return String(value ?? '').replace(/\*\*(.+?)\*\*/gs, '$1').replace(/\s*\r?\n\s*/g, ' ').trim();
+  return String(value ?? '')
+    .replace(/\*\*(.+?)\*\*/gs, '$1')
+    .replace(/\s*\r?\n\s*/g, ' ')
+    .trim();
 }
-

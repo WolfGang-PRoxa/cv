@@ -18,14 +18,24 @@ const win = path.win32;
 
 /** Chemin Windows comparable : séparateurs unifiés, casse ignorée, sans guillemets. */
 export function normalizePath(value) {
-  const text = String(value || '').trim().replace(/^"(.*)"$/, '$1');
+  const text = String(value || '')
+    .trim()
+    .replace(/^"(.*)"$/, '$1');
   if (!text) return '';
-  return win.normalize(text).replace(/[\\]+$/, '').toLowerCase();
+  return win
+    .normalize(text)
+    .replace(/[\\]+$/, '')
+    .toLowerCase();
 }
 
 /** Arguments comparables : guillemets et espaces superflus retirés, chemins normalisés. */
 export function normalizeArgs(value) {
-  return String(value || '').trim().split(/\s+(?=(?:[^"]*"[^"]*")*[^"]*$)/).filter(Boolean).map(normalizePath).join(' ');
+  return String(value || '')
+    .trim()
+    .split(/\s+(?=(?:[^"]*"[^"]*")*[^"]*$)/)
+    .filter(Boolean)
+    .map(normalizePath)
+    .join(' ');
 }
 
 /** Le raccourci lance-t-il exactement cette installation (même exécutable, mêmes arguments) ? */
@@ -69,11 +79,15 @@ export const PRESENT = new Set(['ok', 'other-name']);
  */
 export function plannedAction(status) {
   switch (status) {
-    case 'missing': return 'create';
+    case 'missing':
+      return 'create';
     case 'outdated':
-    case 'broken': return 'repair';
-    case 'foreign': return 'replace';
-    default: return 'none';
+    case 'broken':
+      return 'repair';
+    case 'foreign':
+      return 'replace';
+    default:
+      return 'none';
   }
 }
 

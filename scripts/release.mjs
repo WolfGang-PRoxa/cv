@@ -28,11 +28,7 @@ const tag = `v${version}`;
 const { owner, repo } = pkg.build.publish[0];
 const repoSlug = `${owner}/${repo}`;
 const dist = path.join(root, 'dist');
-const files = [
-  `CV-Studio-Setup-${version}.exe`,
-  `CV-Studio-Setup-${version}.exe.blockmap`,
-  'latest.yml',
-];
+const files = [`CV-Studio-Setup-${version}.exe`, `CV-Studio-Setup-${version}.exe.blockmap`, 'latest.yml'];
 
 function fail(message) {
   console.error(`\n✗ ${message}`);
@@ -69,8 +65,10 @@ if (branch !== 'main') fail(`Branche actuelle : ${branch}. Publier depuis main :
 
 const changes = run('git', ['status', '--porcelain'], { capture: true }).out;
 if (changes) {
-  fail(`Modifications locales non enregistrées :\n${changes}\n`
-    + 'Les annuler (`git checkout -- <fichier>`) ou les committer avant de publier.');
+  fail(
+    `Modifications locales non enregistrées :\n${changes}\n` +
+      'Les annuler (`git checkout -- <fichier>`) ou les committer avant de publier.',
+  );
 }
 
 run('git', ['fetch', 'origin', 'main', '--quiet']);
@@ -83,13 +81,18 @@ if (head !== remoteHead) {
   if (Number(ahead)) fail(`main a ${ahead} commit(s) non envoyé(s) sur GitHub : lancer \`git push\`, puis relancer.`);
 }
 
-const existing = run('gh', ['release', 'view', tag, '--repo', repoSlug, '--json', 'assets,isDraft'], { capture: true, allowFailure: true });
+const existing = run('gh', ['release', 'view', tag, '--repo', repoSlug, '--json', 'assets,isDraft'], {
+  capture: true,
+  allowFailure: true,
+});
 let repair = false;
 if (existing.ok) {
-  const names = JSON.parse(existing.out).assets.map(asset => asset.name);
-  const missing = files.filter(name => !names.includes(name));
+  const names = JSON.parse(existing.out).assets.map((asset) => asset.name);
+  const missing = files.filter((name) => !names.includes(name));
   if (!missing.length) {
-    fail(`La version ${version} est déjà publiée et complète. Augmenter \`version\` dans package.json pour en publier une nouvelle.`);
+    fail(
+      `La version ${version} est déjà publiée et complète. Augmenter \`version\` dans package.json pour en publier une nouvelle.`,
+    );
   }
   repair = true;
   console.log(`La release ${tag} existe mais il lui manque : ${missing.join(', ')}. Elle va être réparée.`);
@@ -101,7 +104,7 @@ for (const name of files) fs.rmSync(path.join(dist, name), { force: true });
 const require = createRequire(import.meta.url);
 run(process.execPath, [require.resolve('electron-builder/cli.js'), '--win', '--publish', 'never']);
 
-const paths = files.map(name => path.join(dist, name));
+const paths = files.map((name) => path.join(dist, name));
 for (const file of paths) {
   if (!fs.existsSync(file)) fail(`Fichier attendu absent après la construction : ${path.relative(root, file)}`);
 }
@@ -116,21 +119,31 @@ if (repair) {
   run('gh', ['release', 'edit', tag, '--repo', repoSlug, '--draft=false', '--latest']);
 } else {
   step(`Création de la release ${tag}`);
-  run('gh', ['release', 'create', tag, ...paths,
-    '--repo', repoSlug,
-    '--target', head,
-    '--title', version,
+  run('gh', [
+    'release',
+    'create',
+    tag,
+    ...paths,
+    '--repo',
+    repoSlug,
+    '--target',
+    head,
+    '--title',
+    version,
     '--generate-notes',
-    '--latest']);
+    '--latest',
+  ]);
 }
 
 /* 4. Vérification ------------------------------------------------------- */
 step('Vérification de la release sur GitHub');
-const published = JSON.parse(run('gh', ['release', 'view', tag, '--repo', repoSlug, '--json', 'assets,isDraft,url'], { capture: true }).out);
+const published = JSON.parse(
+  run('gh', ['release', 'view', tag, '--repo', repoSlug, '--json', 'assets,isDraft,url'], { capture: true }).out,
+);
 const problems = [];
 if (published.isDraft) problems.push('la release est encore un brouillon');
 for (const [index, name] of files.entries()) {
-  const asset = published.assets.find(item => item.name === name);
+  const asset = published.assets.find((item) => item.name === name);
   const size = fs.statSync(paths[index]).size;
   if (!asset) problems.push(`${name} absent`);
   else if (asset.size !== size) problems.push(`${name} incomplet (${asset.size} octets sur ${size})`);

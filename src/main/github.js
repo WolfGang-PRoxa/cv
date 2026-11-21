@@ -46,7 +46,8 @@ export async function defaultRepo() {
 }
 
 export function parseRepo(value) {
-  const text = String(value || '').trim()
+  const text = String(value || '')
+    .trim()
     .replace(/^https?:\/\/github\.com\//i, '')
     .replace(/\.git$/i, '')
     .replace(/\/+$/, '');
@@ -64,7 +65,7 @@ async function targetRepo() {
 /* -- Jeton ------------------------------------------------------------ */
 
 function ghToken() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     execFile('gh', ['auth', 'token'], { timeout: 8000, windowsHide: true }, (error, stdout) => {
       const token = String(stdout || '').trim();
       resolve(!error && token ? token : null);
@@ -76,7 +77,8 @@ async function decryptStoredToken(settings) {
   const stored = settings.github?.token;
   if (!stored) return null;
   try {
-    if (stored.startsWith('enc:')) return (await safeStorage.decryptStringAsync(Buffer.from(stored.slice(4), 'base64'))).result;
+    if (stored.startsWith('enc:'))
+      return (await safeStorage.decryptStringAsync(Buffer.from(stored.slice(4), 'base64'))).result;
     if (stored.startsWith('raw:')) return Buffer.from(stored.slice(4), 'base64').toString('utf8');
   } catch {
     return null;
@@ -134,15 +136,23 @@ export async function request(token, method, url, { body, headers = {}, raw = fa
 }
 
 function safeJson(text) {
-  try { return JSON.parse(text); } catch { return { message: text }; }
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { message: text };
+  }
 }
 
 function describeHttpError(status, data) {
-  const detail = data?.errors?.map(item => item.message || item.code).filter(Boolean).join(', ');
+  const detail = data?.errors
+    ?.map((item) => item.message || item.code)
+    .filter(Boolean)
+    .join(', ');
   if (status === 401) return 'jeton GitHub refusé (expiré ou invalide).';
   if (status === 403) return `accès refusé par GitHub${data?.message ? ` : ${data.message}` : ''}.`;
   if (status === 404) return 'dépôt introuvable, ou jeton sans accès à ce dépôt.';
-  if (status === 422 && /already_exists/i.test(JSON.stringify(data?.errors || ''))) return 'une release porte déjà ce tag.';
+  if (status === 422 && /already_exists/i.test(JSON.stringify(data?.errors || '')))
+    return 'une release porte déjà ce tag.';
   return `GitHub a répondu ${status}${data?.message ? ` : ${data.message}` : ''}${detail ? ` (${detail})` : ''}.`;
 }
 
@@ -210,7 +220,11 @@ function toRelease(item) {
     cvId: meta?.cvId || null,
     revision: meta?.revision ?? null,
     notes: (item.body || '').replace(MARKER, '').trim(),
-    assets: (item.assets || []).map(asset => ({ name: asset.name, url: asset.browser_download_url, size: asset.size })),
+    assets: (item.assets || []).map((asset) => ({
+      name: asset.name,
+      url: asset.browser_download_url,
+      size: asset.size,
+    })),
   };
 }
 
@@ -221,8 +235,14 @@ export async function listReleases() {
   const repo = await targetRepo();
   const releases = [];
   for (let page = 1; page <= 10; page += 1) {
-    const items = await request(token, 'GET', `/repos/${repo.owner}/${repo.repo}/releases?per_page=100&page=${page}`).catch(error => { throw new Error(networkMessage(error)); });
-    releases.push(...items.filter(item => item.tag_name.startsWith(CV_TAG_PREFIX) && !item.draft).map(toRelease));
+    const items = await request(
+      token,
+      'GET',
+      `/repos/${repo.owner}/${repo.repo}/releases?per_page=100&page=${page}`,
+    ).catch((error) => {
+      throw new Error(networkMessage(error));
+    });
+    releases.push(...items.filter((item) => item.tag_name.startsWith(CV_TAG_PREFIX) && !item.draft).map(toRelease));
     if (items.length < 100) break;
   }
   return releases;
@@ -305,14 +325,15 @@ export async function publishRelease(payload, { makePdf, onProgress = () => {} }
 
 /** Supprime une release de CV, et son tag. */
 export async function deleteRelease({ id, tag }) {
-  if (!String(tag || '').startsWith(CV_TAG_PREFIX)) throw new Error('seules les releases de CV peuvent être supprimées ici.');
+  if (!String(tag || '').startsWith(CV_TAG_PREFIX))
+    throw new Error('seules les releases de CV peuvent être supprimées ici.');
   const { token } = await resolveToken();
   if (!token) throw new Error('aucun jeton GitHub configuré.');
   const repo = await targetRepo();
   const base = `/repos/${repo.owner}/${repo.repo}`;
   try {
     await request(token, 'DELETE', `${base}/releases/${id}`);
-    await request(token, 'DELETE', `${base}/git/refs/tags/${encodeURIComponent(tag)}`).catch(error => {
+    await request(token, 'DELETE', `${base}/git/refs/tags/${encodeURIComponent(tag)}`).catch((error) => {
       if (error.status !== 404 && error.status !== 422) throw error;
     });
   } catch (error) {

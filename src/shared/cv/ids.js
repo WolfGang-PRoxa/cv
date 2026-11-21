@@ -19,8 +19,11 @@ export function clone(value) {
  */
 export function cloneWithNewIds(value) {
   const copy = clone(value);
-  const visit = node => {
-    if (Array.isArray(node)) { node.forEach(visit); return; }
+  const visit = (node) => {
+    if (Array.isArray(node)) {
+      node.forEach(visit);
+      return;
+    }
     if (!node || typeof node !== 'object') return;
     if (typeof node.id === 'string') {
       const prefix = node.id.includes('-') ? node.id.slice(0, node.id.indexOf('-')) : 'el';

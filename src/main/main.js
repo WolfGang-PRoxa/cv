@@ -38,17 +38,17 @@ app.on('window-all-closed', () => app.quit());
 
 // Modifications pas encore envoyées à la synchronisation : envoi avant de quitter.
 let flushedBeforeQuit = false;
-app.on('before-quit', event => {
+app.on('before-quit', (event) => {
   if (flushedBeforeQuit) return;
   event.preventDefault();
   flushedBeforeQuit = true;
-  Promise.race([sync.flush(), new Promise(resolve => setTimeout(resolve, 8000))]).finally(() => app.quit());
+  Promise.race([sync.flush(), new Promise((resolve) => setTimeout(resolve, 8000))]).finally(() => app.quit());
 });
 
 async function start() {
   Menu.setApplicationMenu(null);
   registerIpc();
-  initUpdater(status => mainWindow?.webContents.send('update:status', status));
+  initUpdater((status) => mainWindow?.webContents.send('update:status', status));
   const settings = await storage.readSettings();
   await sync.init(() => mainWindow);
   await createWindow(settings);
@@ -93,7 +93,7 @@ async function createWindow(settings) {
 
   // Modifications non enregistrées : l'interface bloque la fermeture (beforeunload),
   // une confirmation est alors demandée.
-  mainWindow.webContents.on('will-prevent-unload', event => {
+  mainWindow.webContents.on('will-prevent-unload', (event) => {
     const choice = dialog.showMessageBoxSync(mainWindow, {
       type: 'warning',
       buttons: ['Quitter sans enregistrer', 'Annuler'],
@@ -107,7 +107,9 @@ async function createWindow(settings) {
   });
 
   mainWindow.on('focus', () => sync.notifyFocus());
-  mainWindow.on('closed', () => { mainWindow = null; });
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
 
   await mainWindow.loadFile(path.join(here, '..', 'renderer', 'index.html'));
 
@@ -121,19 +123,21 @@ async function createWindow(settings) {
  */
 async function captureAndQuit(target) {
   const steps = (process.env.CV_STUDIO_SCRIPT || '').split(';;').filter(Boolean);
-  await new Promise(resolve => setTimeout(resolve, 1500));
+  await new Promise((resolve) => setTimeout(resolve, 1500));
   for (const step of steps) {
     if (step.startsWith('wait:')) {
-      await new Promise(resolve => setTimeout(resolve, Number(step.slice(5))));
+      await new Promise((resolve) => setTimeout(resolve, Number(step.slice(5))));
     } else if (step.startsWith('frame:')) {
       // Exécution dans le cadre d'aperçu du CV (iframe isolée).
       const frame = mainWindow.webContents.mainFrame.frames[0];
-      await frame?.executeJavaScript(step.slice(6)).catch(error => console.error('Étape en échec :', error.message));
+      await frame?.executeJavaScript(step.slice(6)).catch((error) => console.error('Étape en échec :', error.message));
     } else {
-      await mainWindow.webContents.executeJavaScript(step).catch(error => console.error('Étape en échec :', error.message));
+      await mainWindow.webContents
+        .executeJavaScript(step)
+        .catch((error) => console.error('Étape en échec :', error.message));
     }
   }
-  await new Promise(resolve => setTimeout(resolve, 900));
+  await new Promise((resolve) => setTimeout(resolve, 900));
   const image = await mainWindow.webContents.capturePage();
   await fs.writeFile(target, image.toPNG());
   app.exit(0);
@@ -152,32 +156,47 @@ function registerIpc() {
 
   handle('base:get', () => storage.readBase());
   // Chaque enregistrement est signalé à la synchronisation (envoi différé de quelques secondes).
-  const changed = fn => async (...args) => {
-    const result = await fn(...args);
-    sync.notifyLocalChange();
-    return result;
-  };
-  handle('base:save', changed(cv => storage.writeBase(cv)));
+  const changed =
+    (fn) =>
+    async (...args) => {
+      const result = await fn(...args);
+      sync.notifyLocalChange();
+      return result;
+    };
+  handle(
+    'base:save',
+    changed((cv) => storage.writeBase(cv)),
+  );
   handle('base:bundled', () => storage.readBundledBase());
-  handle('base:export-json', payload => exporter.exportJson(mainWindow, payload));
+  handle('base:export-json', (payload) => exporter.exportJson(mainWindow, payload));
   handle('base:import-json', () => exporter.importJson(mainWindow));
 
   handle('cvs:list', () => storage.listCvs());
-  handle('cvs:save', changed(cv => storage.writeCv(cv)));
-  handle('cvs:delete', changed(id => storage.deleteCv(id)));
+  handle(
+    'cvs:save',
+    changed((cv) => storage.writeCv(cv)),
+  );
+  handle(
+    'cvs:delete',
+    changed((id) => storage.deleteCv(id)),
+  );
 
-  handle('export:html', payload => exporter.exportHtml(mainWindow, payload));
-  handle('export:pdf', payload => exporter.exportPdf(mainWindow, payload));
-  handle('export:browser', payload => exporter.openInBrowser(payload));
+  handle('export:html', (payload) => exporter.exportHtml(mainWindow, payload));
+  handle('export:pdf', (payload) => exporter.exportPdf(mainWindow, payload));
+  handle('export:browser', (payload) => exporter.openInBrowser(payload));
   handle('data:open-folder', () => shell.openPath(storage.getDataDir()));
 
   // Le jeton GitHub reste dans le processus principal : il est retiré des paramètres
   // envoyés à l'interface, et l'interface ne peut pas le modifier par ce biais.
   // Même chose pour la clé de synchronisation, et les réglages de synchronisation ne
   // changent que par les commandes « sync:… » ci-dessous.
-  const publicSettings = ({ github: { token, ...githubRest } = {}, sync: { key, salt, ...syncRest } = {}, ...rest }) => ({ ...rest, github: githubRest, sync: syncRest });
+  const publicSettings = ({
+    github: { token, ...githubRest } = {},
+    sync: { key, salt, ...syncRest } = {},
+    ...rest
+  }) => ({ ...rest, github: githubRest, sync: syncRest });
   handle('settings:get', async () => publicSettings(await storage.readSettings()));
-  handle('settings:save', async partial => {
+  handle('settings:save', async (partial) => {
     const { token, ...githubRest } = partial?.github || {};
     const { sync: _ignored, ...withoutSync } = partial || {};
     const safe = partial?.github ? { ...withoutSync, github: githubRest } : withoutSync;
@@ -187,28 +206,32 @@ function registerIpc() {
   handle('window:bounds', () => (mainWindow ? mainWindow.getNormalBounds() : null));
 
   handle('github:status', () => github.status());
-  handle('github:save-token', token => github.saveToken(token));
+  handle('github:save-token', (token) => github.saveToken(token));
   handle('github:releases', () => github.listReleases());
-  handle('github:publish', payload => github.publishRelease(payload, {
-    makePdf: exporter.renderPdfBuffer,
-    onProgress: progress => mainWindow?.webContents.send('github:progress', progress),
-  }));
-  handle('github:delete-release', release => github.deleteRelease(release));
-  handle('github:open', url => {
+  handle('github:publish', (payload) =>
+    github.publishRelease(payload, {
+      makePdf: exporter.renderPdfBuffer,
+      onProgress: (progress) => mainWindow?.webContents.send('github:progress', progress),
+    }),
+  );
+  handle('github:delete-release', (release) => github.deleteRelease(release));
+  handle('github:open', (url) => {
     if (/^https:\/\/github\.com\//.test(String(url))) return shell.openExternal(url);
     return false;
   });
 
   handle('sync:status', () => sync.getStatus());
   handle('sync:choose-folder', () => sync.chooseFolder());
-  handle('sync:enable-gist', passphrase => sync.enableGist(String(passphrase || '')));
+  handle('sync:enable-gist', (passphrase) => sync.enableGist(String(passphrase || '')));
   handle('sync:disable', () => sync.disable());
   handle('sync:now', () => sync.syncNow());
 
   handle('shortcuts:status', () => shortcuts.status());
-  handle('shortcuts:create', (id, options) => shortcuts.create(String(id), { confirmReplace: options?.confirmReplace === true }));
-  handle('shortcuts:remove', id => shortcuts.remove(String(id)));
-  handle('shortcuts:reveal', id => shortcuts.reveal(String(id)));
+  handle('shortcuts:create', (id, options) =>
+    shortcuts.create(String(id), { confirmReplace: options?.confirmReplace === true }),
+  );
+  handle('shortcuts:remove', (id) => shortcuts.remove(String(id)));
+  handle('shortcuts:reveal', (id) => shortcuts.reveal(String(id)));
 
   handle('update:check', () => checkForUpdates());
   handle('update:status', () => getUpdateStatus());

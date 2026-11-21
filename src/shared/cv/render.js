@@ -19,7 +19,7 @@ export function pruneHidden(cv, hiddenIds = []) {
   const hidden = hiddenIds instanceof Set ? hiddenIds : new Set(hiddenIds);
   const copy = clone(cv);
   if (!hidden.size) return copy;
-  const visit = node => {
+  const visit = (node) => {
     if (Array.isArray(node)) {
       for (let i = node.length - 1; i >= 0; i -= 1) {
         const item = node[i];
@@ -52,11 +52,11 @@ function createContext(options) {
     preview,
     instant: Boolean(options.instant || preview?.instant),
     /** Attribut d'identification, seulement dans l'aperçu de l'éditeur. */
-    mark: id => (preview && id ? ` data-cv-id="${escapeAttr(id)}"` : ''),
+    mark: (id) => (preview && id ? ` data-cv-id="${escapeAttr(id)}"` : ''),
   };
 }
 
-const join = parts => parts.filter(Boolean).join('\n');
+const join = (parts) => parts.filter(Boolean).join('\n');
 
 function revealAttr(block, cv) {
   const value = block.animation && block.animation !== 'inherit' ? block.animation : cv.animations.reveal;
@@ -65,7 +65,7 @@ function revealAttr(block, cv) {
 
 function textItems(items, tag = 'span', className = '') {
   const cls = className ? ` class="${className}"` : '';
-  return (items || []).map(item => `<${tag}${cls}>${rich(item.text)}</${tag}>`).join('');
+  return (items || []).map((item) => `<${tag}${cls}>${rich(item.text)}</${tag}>`).join('');
 }
 
 /* ------------------------------------------------------------------ */
@@ -88,7 +88,9 @@ function renderContact(contact, ctx) {
     }
     case 'location': {
       const query = contact.url?.trim() || `${textOnly(contact.value)}, France`;
-      const href = /^https?:\/\//i.test(query) ? query : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+      const href = /^https?:\/\//i.test(query)
+        ? query
+        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
       return `<a class="contact-item location-link" href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer" aria-label="Ouvrir la localisation de ${escapeAttr(textOnly(contact.value))} dans Google Maps" title="Ouvrir dans Google Maps"${mark}>
             ${icon}
             <span class="contact-value">${value}</span>
@@ -123,9 +125,13 @@ function renderHero(cv, ctx) {
           <h1 id="cv-name">${plain(hero.firstName)}${hero.firstName && hero.lastName ? '<br>' : ''}${plain(hero.lastName)}</h1>
           ${hero.subtitle ? `<p class="subtitle">${plain(hero.subtitle)}</p>` : ''}
         </div>
-        ${contacts.length ? `<nav class="contact-grid" aria-label="Coordonnées">
-          ${contacts.map(c => renderContact(c, ctx)).join('\n          ')}
-        </nav>` : ''}
+        ${
+          contacts.length
+            ? `<nav class="contact-grid" aria-label="Coordonnées">
+          ${contacts.map((c) => renderContact(c, ctx)).join('\n          ')}
+        </nav>`
+            : ''
+        }
       </header>`;
 }
 
@@ -137,9 +143,9 @@ function renderSummaryComponent(component, ctx) {
   const mark = ctx.mark(component.id);
   switch (component.type) {
     case 'bullets': {
-      const hasLead = (component.items || []).some(item => item.lead);
+      const hasLead = (component.items || []).some((item) => item.lead);
       return `<ul class="plain-list${hasLead ? ' interests-list' : ''}"${mark}>
-              ${(component.items || []).map(item => `<li${ctx.mark(item.id)}>${item.lead ? `<strong>${plain(item.lead)}</strong> ` : ''}${rich(item.text)}</li>`).join('\n              ')}
+              ${(component.items || []).map((item) => `<li${ctx.mark(item.id)}>${item.lead ? `<strong>${plain(item.lead)}</strong> ` : ''}${rich(item.text)}</li>`).join('\n              ')}
             </ul>`;
     }
     case 'subheading':
@@ -147,13 +153,20 @@ function renderSummaryComponent(component, ctx) {
     case 'divider':
       return `<div class="panel-divider"${mark}></div>`;
     case 'keyvalues':
-      return (component.items || []).map(item => `<div class="language-line"${ctx.mark(item.id)}><strong>${plain(item.key)}</strong><span>${plain(item.value)}</span></div>`).join('\n            ');
+      return (component.items || [])
+        .map(
+          (item) =>
+            `<div class="language-line"${ctx.mark(item.id)}><strong>${plain(item.key)}</strong><span>${plain(item.value)}</span></div>`,
+        )
+        .join('\n            ');
     case 'tags':
-      return `<div class="software"${mark}>${(component.items || []).map(item => `<span${ctx.mark(item.id)}>${plain(item.text)}</span>`).join('')}</div>`;
+      return `<div class="software"${mark}>${(component.items || []).map((item) => `<span${ctx.mark(item.id)}>${plain(item.text)}</span>`).join('')}</div>`;
     case 'paragraph':
       return `<p class="panel-text"${mark}>${rich(component.text)}</p>`;
     case 'image':
-      return component.src ? `<img class="pix-image" src="${escapeAttr(component.src)}" alt="${escapeAttr(component.alt || '')}"${mark}>` : '';
+      return component.src
+        ? `<img class="pix-image" src="${escapeAttr(component.src)}" alt="${escapeAttr(component.alt || '')}"${mark}>`
+        : '';
     default:
       return '';
   }
@@ -161,22 +174,22 @@ function renderSummaryComponent(component, ctx) {
 
 function renderPills(items, ctx) {
   if (!items?.length) return '';
-  return `<div class="interest-pills">${items.map(item => `<span${ctx.mark(item.id)}>${plain(item.text)}</span>`).join('')}</div>`;
+  return `<div class="interest-pills">${items.map((item) => `<span${ctx.mark(item.id)}>${plain(item.text)}</span>`).join('')}</div>`;
 }
 
 function renderDetailComponent(component, ctx) {
   const mark = ctx.mark(component.id);
   switch (component.type) {
     case 'bullets':
-      return `<ul class="plain-list${(component.items || []).some(i => i.lead) ? ' interests-list' : ''}"${mark}>
-        ${(component.items || []).map(item => `<li${ctx.mark(item.id)}>${item.lead ? `<strong>${plain(item.lead)}</strong> ` : ''}${rich(item.text)}</li>`).join('\n        ')}
+      return `<ul class="plain-list${(component.items || []).some((i) => i.lead) ? ' interests-list' : ''}"${mark}>
+        ${(component.items || []).map((item) => `<li${ctx.mark(item.id)}>${item.lead ? `<strong>${plain(item.lead)}</strong> ` : ''}${rich(item.text)}</li>`).join('\n        ')}
       </ul>`;
     case 'keyvalues':
       return `<div class="language-detail"${mark}>
-        ${(component.items || []).map(item => `<div class="language-detail-item"${ctx.mark(item.id)}><strong>${plain(item.key)}</strong><span>${plain(item.value)}</span></div>`).join('\n        ')}
+        ${(component.items || []).map((item) => `<div class="language-detail-item"${ctx.mark(item.id)}><strong>${plain(item.key)}</strong><span>${plain(item.value)}</span></div>`).join('\n        ')}
       </div>`;
     case 'tags':
-      return `<div class="interest-pills"${mark}>${(component.items || []).map(item => `<span${ctx.mark(item.id)}>${plain(item.text)}</span>`).join('')}</div>`;
+      return `<div class="interest-pills"${mark}>${(component.items || []).map((item) => `<span${ctx.mark(item.id)}>${plain(item.text)}</span>`).join('')}</div>`;
     case 'paragraph':
       return `<p class="detail-paragraph"${mark}>${rich(component.text)}</p>`;
     case 'note':
@@ -184,7 +197,9 @@ function renderDetailComponent(component, ctx) {
     case 'label':
       return `<h3 class="detail-section-label"${mark}>${plain(component.text)}</h3>`;
     case 'image':
-      return component.src ? `<div class="detail-image-wrap"${mark}><img class="pix-detail-image" src="${escapeAttr(component.src)}" alt="${escapeAttr(component.alt || '')}"></div>` : '';
+      return component.src
+        ? `<div class="detail-image-wrap"${mark}><img class="pix-detail-image" src="${escapeAttr(component.src)}" alt="${escapeAttr(component.alt || '')}"></div>`
+        : '';
     case 'score':
       return `<div class="pix-detail-score"${mark}>${plain(component.label)} <strong>${plain(component.value)}</strong></div>`;
     case 'profile':
@@ -197,7 +212,9 @@ function renderDetailComponent(component, ctx) {
       </div>`;
     case 'projects':
       return `<div class="detail-projects"${mark}>
-        ${(component.items || []).map(project => `<article class="detail-project"${ctx.mark(project.id)}>
+        ${(component.items || [])
+          .map(
+            (project) => `<article class="detail-project"${ctx.mark(project.id)}>
           <div class="project-top">
             <span class="project-mark${project.accent === 'violet' ? ' project-mark--undercover' : ''}" aria-hidden="true">
               ${iconSvg(project.icon, { strokeWidth: 1.75 })}
@@ -205,50 +222,86 @@ function renderDetailComponent(component, ctx) {
             <div>${project.kind ? `<span class="project-kind">${plain(project.kind)}</span>` : ''}<h3 class="project-title">${plain(project.title)}</h3></div>
           </div>
           ${project.text ? `<p>${rich(project.text)}</p>` : ''}
-          ${project.tags?.length ? `<div class="project-tags">${project.tags.map(tag => `<span${ctx.mark(tag.id)}>${plain(tag.text)}</span>`).join('')}</div>` : ''}
+          ${project.tags?.length ? `<div class="project-tags">${project.tags.map((tag) => `<span${ctx.mark(tag.id)}>${plain(tag.text)}</span>`).join('')}</div>` : ''}
           ${project.url ? `<a class="project-link" href="${escapeAttr(project.url)}" target="_blank" rel="noopener noreferrer">${plain(project.linkLabel || 'Voir le projet')} ${iconSvg('arrow-up-right', { strokeWidth: 2 })}</a>` : ''}
-        </article>`).join('\n        ')}
+        </article>`,
+          )
+          .join('\n        ')}
       </div>`;
     case 'tiles':
       return `<div class="software-grid"${mark}>
-        ${(component.items || []).map(tile => `<article class="software-tile"${ctx.mark(tile.id)}>
+        ${(component.items || [])
+          .map(
+            (tile) => `<article class="software-tile"${ctx.mark(tile.id)}>
           <span class="software-logo" aria-hidden="true">
             ${iconSvg(tile.logo, { strokeWidth: 1.8 })}
           </span>
           <div class="software-copy"><strong>${plain(tile.title)}</strong>${tile.subtitle ? `<span>${plain(tile.subtitle)}</span>` : ''}</div>
-        </article>`).join('\n        ')}
+        </article>`,
+          )
+          .join('\n        ')}
       </div>`;
     case 'infopanels':
       return `<div class="skills-detail-grid"${mark}>
-        ${(component.items || []).map(panel => `<section class="detail-info-panel"${ctx.mark(panel.id)}>
+        ${(component.items || [])
+          .map(
+            (panel) => `<section class="detail-info-panel"${ctx.mark(panel.id)}>
           <h3>${iconSvg(panel.icon, { strokeWidth: 1.9 })}${plain(panel.title)}</h3>
-          ${panel.chips?.length ? `<div class="skill-chip-list">
-            ${panel.chips.map(chip => `<span class="skill-chip"${ctx.mark(chip.id)}>${plain(chip.text)}</span>`).join('')}
-          </div>` : ''}
-          ${panel.lines?.length ? `<div class="language-detail">
-            ${panel.lines.map(line => `<div class="language-detail-item"${ctx.mark(line.id)}><strong>${plain(line.key)}</strong><span>${plain(line.value)}</span></div>`).join('\n            ')}
-          </div>` : ''}
+          ${
+            panel.chips?.length
+              ? `<div class="skill-chip-list">
+            ${panel.chips.map((chip) => `<span class="skill-chip"${ctx.mark(chip.id)}>${plain(chip.text)}</span>`).join('')}
+          </div>`
+              : ''
+          }
+          ${
+            panel.lines?.length
+              ? `<div class="language-detail">
+            ${panel.lines.map((line) => `<div class="language-detail-item"${ctx.mark(line.id)}><strong>${plain(line.key)}</strong><span>${plain(line.value)}</span></div>`).join('\n            ')}
+          </div>`
+              : ''
+          }
           ${panel.note ? `<p class="detail-context">${rich(panel.note)}</p>` : ''}
-        </section>`).join('\n        ')}
+        </section>`,
+          )
+          .join('\n        ')}
       </div>`;
     case 'cards':
       return `<div class="interest-detail-grid"${mark}>
-        ${(component.items || []).map(card => `<article class="interest-detail-card${card.wide ? ' interest-detail-card--wide' : ''}"${ctx.mark(card.id)}>
+        ${(component.items || [])
+          .map(
+            (
+              card,
+            ) => `<article class="interest-detail-card${card.wide ? ' interest-detail-card--wide' : ''}"${ctx.mark(card.id)}>
           <span class="interest-icon" aria-hidden="true">${iconSvg(card.icon, { strokeWidth: 1.8 })}</span>
           <h3>${plain(card.title)}</h3>
           ${card.text ? `<p>${rich(card.text)}</p>` : ''}
-          ${card.timeline?.length ? `<ol class="interest-timeline">
-            ${card.timeline.map(step => `<li${ctx.mark(step.id)}><span class="interest-years">${plain(step.period)}</span><strong>${plain(step.label)}</strong></li>`).join('\n            ')}
-          </ol>` : ''}
+          ${
+            card.timeline?.length
+              ? `<ol class="interest-timeline">
+            ${card.timeline.map((step) => `<li${ctx.mark(step.id)}><span class="interest-years">${plain(step.period)}</span><strong>${plain(step.label)}</strong></li>`).join('\n            ')}
+          </ol>`
+              : ''
+          }
           ${renderPills(card.pills, ctx)}
-          ${card.entries?.length ? `<div class="volunteer-list">
-            ${card.entries.map(entry => `<div class="volunteer-item"${ctx.mark(entry.id)}>
+          ${
+            card.entries?.length
+              ? `<div class="volunteer-list">
+            ${card.entries
+              .map(
+                (entry) => `<div class="volunteer-item"${ctx.mark(entry.id)}>
               <div class="volunteer-head"><strong>${plain(entry.title)}</strong>${entry.badge ? `<span class="volunteer-badge">${plain(entry.badge)}</span>` : ''}</div>
               ${entry.text ? `<p>${rich(entry.text)}</p>` : ''}
               ${renderPills(entry.pills, ctx)}
-            </div>`).join('\n            ')}
-          </div>` : ''}
-        </article>`).join('\n        ')}
+            </div>`,
+              )
+              .join('\n            ')}
+          </div>`
+              : ''
+          }
+        </article>`,
+          )
+          .join('\n        ')}
       </div>`;
     default:
       return '';
@@ -283,20 +336,27 @@ function renderBlock(block, cv, ctx, zone) {
       return `<section class="section reveal"${reveal} aria-labelledby="${block.id}-title"${mark}>
             <h2 class="section-heading" id="${block.id}-title"><span class="heading-mark"></span>${plain(block.title)}</h2>
             <div class="timeline">
-              ${(block.items || []).map(item => `<article class="timeline-item"${ctx.mark(item.id)}>
+              ${(block.items || [])
+                .map(
+                  (item) => `<article class="timeline-item"${ctx.mark(item.id)}>
                 <div class="date">${rich(item.date)}</div>
                 <div class="item-body">
                   <h3 class="item-title">${plain(item.title)}</h3>
                   ${item.meta ? `<p class="item-meta">${plain(item.meta)}</p>` : ''}
-                  ${item.details?.length ? `<div class="item-extra">${item.details.map(d => `<p${ctx.mark(d.id)}>${rich(d.text)}</p>`).join('')}</div>` : ''}
+                  ${item.details?.length ? `<div class="item-extra">${item.details.map((d) => `<p${ctx.mark(d.id)}>${rich(d.text)}</p>`).join('')}</div>` : ''}
                 </div>
-              </article>`).join('\n              ')}
+              </article>`,
+                )
+                .join('\n              ')}
             </div>
           </section>`;
     case 'panel':
       return `<section class="side-panel reveal${interactive ? ' interactive-box' : ''}"${reveal}${interactiveAttrs(block, block.title)} aria-labelledby="${block.id}-title"${mark}>
             <h2 class="section-heading" id="${block.id}-title"><span class="heading-mark"></span>${plain(block.title)}</h2>
-            ${(block.components || []).map(c => renderSummaryComponent(c, ctx)).filter(Boolean).join('\n            ')}
+            ${(block.components || [])
+              .map((c) => renderSummaryComponent(c, ctx))
+              .filter(Boolean)
+              .join('\n            ')}
           </section>`;
     case 'linkcard': {
       const inner = `
@@ -322,7 +382,7 @@ function renderBlock(block, cv, ctx, zone) {
 }
 
 function renderZone(cv, zone, ctx) {
-  return (cv.zones[zone] || []).map(block => renderBlock(block, cv, ctx, zone)).filter(Boolean);
+  return (cv.zones[zone] || []).map((block) => renderBlock(block, cv, ctx, zone)).filter(Boolean);
 }
 
 function renderTopZone(cv, ctx) {
@@ -337,7 +397,10 @@ function renderTopZone(cv, ctx) {
   for (const block of cv.zones.top || []) {
     const html = renderBlock(block, cv, ctx, 'top');
     if (!html) continue;
-    if (block.type === 'banner') { flush(); parts.push(html); } else group.push(html);
+    if (block.type === 'banner') {
+      flush();
+      parts.push(html);
+    } else group.push(html);
   }
   flush();
   return parts.join('\n');
@@ -345,12 +408,17 @@ function renderTopZone(cv, ctx) {
 
 function renderTemplates(cv, ctx) {
   const blocks = [...cv.zones.top, ...cv.zones.main, ...cv.zones.side].filter(hasDetail);
-  return blocks.map(block => {
-    const detail = block.detail;
-    return `<template id="detail-${escapeAttr(block.id)}" data-kicker="${escapeAttr(detail.kicker || '')}" data-title="${escapeAttr(detail.title || '')}" data-subtitle="${escapeAttr(detail.subtitle || '')}">
-      ${(detail.components || []).map(c => renderDetailComponent(c, ctx)).filter(Boolean).join('\n      ')}
+  return blocks
+    .map((block) => {
+      const detail = block.detail;
+      return `<template id="detail-${escapeAttr(block.id)}" data-kicker="${escapeAttr(detail.kicker || '')}" data-title="${escapeAttr(detail.title || '')}" data-subtitle="${escapeAttr(detail.subtitle || '')}">
+      ${(detail.components || [])
+        .map((c) => renderDetailComponent(c, ctx))
+        .filter(Boolean)
+        .join('\n      ')}
     </template>`;
-  }).join('\n\n    ');
+    })
+    .join('\n\n    ');
 }
 
 const MODAL = `<div class="detail-overlay" id="detail-modal" aria-hidden="true">
@@ -379,15 +447,23 @@ function renderRail(cv) {
   const { download, theme } = cv.actions;
   if (!download && !theme) return '';
   return `<aside class="action-rail" aria-label="Actions de la page">
-        ${download ? `<button class="rail-button" id="download-pdf" type="button" title="Télécharger / Imprimer" aria-label="Télécharger / Imprimer">
+        ${
+          download
+            ? `<button class="rail-button" id="download-pdf" type="button" title="Télécharger / Imprimer" aria-label="Télécharger / Imprimer">
           <span class="rail-label">Télécharger / Imprimer</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M5 16v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"/></svg>
-        </button>` : ''}
-        ${theme ? `<button class="rail-button theme-button" id="toggle-theme" type="button" title="Activer le mode nuit" aria-label="Activer le mode nuit" aria-pressed="false">
+        </button>`
+            : ''
+        }
+        ${
+          theme
+            ? `<button class="rail-button theme-button" id="toggle-theme" type="button" title="Activer le mode nuit" aria-label="Activer le mode nuit" aria-pressed="false">
           <span class="rail-label">Mode nuit</span>
           <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 14.1A8.7 8.7 0 0 1 9.9 3.2 8.8 8.8 0 1 0 20.8 14.1Z"/></svg>
           <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
-        </button>` : ''}
+        </button>`
+            : ''
+        }
       </aside>`;
 }
 
@@ -419,7 +495,9 @@ function htmlAttributes(cv, ctx) {
   if (ctx.instant) classes.push('cv-instant');
   if (ctx.preview?.selectMode) classes.push('cv-preview-select');
   if (classes.length) attrs.push(`class="${classes.join(' ')}"`);
-  attrs.push(`style="--reveal-duration: ${Number(a.revealDuration) || 650}ms; --card-arrive-duration: ${Number(a.cardArriveDuration) || 850}ms"`);
+  attrs.push(
+    `style="--reveal-duration: ${Number(a.revealDuration) || 650}ms; --card-arrive-duration: ${Number(a.cardArriveDuration) || 850}ms"`,
+  );
   return attrs.join(' ');
 }
 
@@ -437,9 +515,10 @@ export function renderCvHtml(cvInput, { hidden = [], css = '', runtime = '', pre
   const cv = pruneHidden(normalizeCv(cvInput), hidden);
   const ctx = createContext({ preview, instant });
   const anyDetail = [...cv.zones.top, ...cv.zones.main, ...cv.zones.side].some(hasDetail);
-  const footer = cv.document.footerLeft || cv.document.footerRight
-    ? `<footer class="footer"><span class="footer-mark">${plain(cv.document.footerLeft)}</span><span>${plain(cv.document.footerRight)}</span></footer>`
-    : '';
+  const footer =
+    cv.document.footerLeft || cv.document.footerRight
+      ? `<footer class="footer"><span class="footer-mark">${plain(cv.document.footerLeft)}</span><span>${plain(cv.document.footerRight)}</span></footer>`
+      : '';
 
   return `<!doctype html>
 <html ${htmlAttributes(cv, ctx)}>

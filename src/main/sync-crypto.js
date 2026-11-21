@@ -17,18 +17,26 @@ export function newSalt() {
 
 export function deriveKey(passphrase, salt, kdf = KDF) {
   return new Promise((resolve, reject) => {
-    crypto.scrypt(String(passphrase).normalize('NFC'), Buffer.from(salt, 'base64'), kdf.keyLength,
-      { N: kdf.N, r: kdf.r, p: kdf.p, maxmem: 256 * kdf.N * kdf.r }, (error, key) => (error ? reject(error) : resolve(key)));
+    crypto.scrypt(
+      String(passphrase).normalize('NFC'),
+      Buffer.from(salt, 'base64'),
+      kdf.keyLength,
+      { N: kdf.N, r: kdf.r, p: kdf.p, maxmem: 256 * kdf.N * kdf.r },
+      (error, key) => (error ? reject(error) : resolve(key)),
+    );
   });
 }
 
-const encKey = key => key.subarray(0, 32);
-const macKey = key => key.subarray(32, 64);
+const encKey = (key) => key.subarray(0, 32);
+const macKey = (key) => key.subarray(32, 64);
 
 export function seal(key, value) {
   const iv = crypto.randomBytes(12);
   const cipher = crypto.createCipheriv('aes-256-gcm', encKey(key), iv);
-  const body = Buffer.concat([cipher.update(zlib.gzipSync(Buffer.from(JSON.stringify(value), 'utf8'))), cipher.final()]);
+  const body = Buffer.concat([
+    cipher.update(zlib.gzipSync(Buffer.from(JSON.stringify(value), 'utf8'))),
+    cipher.final(),
+  ]);
   return Buffer.concat([Buffer.from([FORMAT]), iv, cipher.getAuthTag(), body]).toString('base64');
 }
 

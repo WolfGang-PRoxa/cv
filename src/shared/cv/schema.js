@@ -47,7 +47,7 @@ const textList = (key, label, itemLabel = 'Élément') => ({
   itemLabel,
   fields: [{ key: 'text', label: 'Texte', type: 'text' }],
   create: () => ({ id: newId('t'), text: '' }),
-  describe: item => textOnly(item.text) || '(vide)',
+  describe: (item) => textOnly(item.text) || '(vide)',
 });
 
 const keyValueList = (key, label) => ({
@@ -60,7 +60,7 @@ const keyValueList = (key, label) => ({
     { key: 'value', label: 'Valeur', type: 'text' },
   ],
   create: () => ({ id: newId('kv'), key: 'Libellé', value: 'Valeur' }),
-  describe: item => [textOnly(item.key), textOnly(item.value)].filter(Boolean).join(' : ') || '(vide)',
+  describe: (item) => [textOnly(item.key), textOnly(item.value)].filter(Boolean).join(' : ') || '(vide)',
 });
 
 /* ------------------------------------------------------------------ */
@@ -72,41 +72,47 @@ export const COMPONENT_TYPES = {
   bullets: {
     label: 'Liste à puces',
     contexts: ['summary', 'detail'],
-    fields: [{
-      key: 'items',
-      label: 'Puces',
-      type: 'list',
-      itemLabel: 'Puce',
-      fields: [
-        { key: 'lead', label: 'Début en gras (facultatif)', type: 'text', placeholder: 'Ex. : Sports :' },
-        { key: 'text', label: 'Texte', type: 'rich' },
-      ],
-      create: () => ({ id: newId('b'), lead: '', text: 'Nouvelle puce' }),
-      describe: item => [textOnly(item.lead), textOnly(item.text)].filter(Boolean).join(' ') || '(vide)',
-    }],
+    fields: [
+      {
+        key: 'items',
+        label: 'Puces',
+        type: 'list',
+        itemLabel: 'Puce',
+        fields: [
+          { key: 'lead', label: 'Début en gras (facultatif)', type: 'text', placeholder: 'Ex. : Sports :' },
+          { key: 'text', label: 'Texte', type: 'rich' },
+        ],
+        create: () => ({ id: newId('b'), lead: '', text: 'Nouvelle puce' }),
+        describe: (item) => [textOnly(item.lead), textOnly(item.text)].filter(Boolean).join(' ') || '(vide)',
+      },
+    ],
     create: () => ({ id: newId('c'), type: 'bullets', items: [{ id: newId('b'), lead: '', text: 'Nouvelle puce' }] }),
-    describe: c => `${c.items?.length || 0} puce(s)`,
+    describe: (c) => `${c.items?.length || 0} puce(s)`,
   },
   keyvalues: {
     label: 'Lignes libellé / valeur',
     contexts: ['summary', 'detail'],
     fields: [keyValueList('items', 'Lignes')],
-    create: () => ({ id: newId('c'), type: 'keyvalues', items: [{ id: newId('kv'), key: 'Libellé', value: 'Valeur' }] }),
-    describe: c => (c.items || []).map(i => textOnly(i.key)).join(', '),
+    create: () => ({
+      id: newId('c'),
+      type: 'keyvalues',
+      items: [{ id: newId('kv'), key: 'Libellé', value: 'Valeur' }],
+    }),
+    describe: (c) => (c.items || []).map((i) => textOnly(i.key)).join(', '),
   },
   tags: {
     label: 'Étiquettes',
     contexts: ['summary', 'detail'],
     fields: [textList('items', 'Étiquettes', 'Étiquette')],
     create: () => ({ id: newId('c'), type: 'tags', items: [{ id: newId('t'), text: 'Étiquette' }] }),
-    describe: c => (c.items || []).map(i => textOnly(i.text)).join(', '),
+    describe: (c) => (c.items || []).map((i) => textOnly(i.text)).join(', '),
   },
   subheading: {
     label: 'Sous-titre',
     contexts: ['summary'],
     fields: [{ key: 'text', label: 'Texte', type: 'text' }],
     create: () => ({ id: newId('c'), type: 'subheading', text: 'Sous-titre' }),
-    describe: c => textOnly(c.text),
+    describe: (c) => textOnly(c.text),
   },
   divider: {
     label: 'Séparateur',
@@ -120,7 +126,7 @@ export const COMPONENT_TYPES = {
     contexts: ['summary', 'detail'],
     fields: [{ key: 'text', label: 'Texte', type: 'rich' }],
     create: () => ({ id: newId('c'), type: 'paragraph', text: 'Nouveau paragraphe' }),
-    describe: c => textOnly(c.text).slice(0, 60),
+    describe: (c) => textOnly(c.text).slice(0, 60),
   },
   image: {
     label: 'Image',
@@ -130,7 +136,7 @@ export const COMPONENT_TYPES = {
       { key: 'alt', label: 'Description de l’image (accessibilité)', type: 'text' },
     ],
     create: () => ({ id: newId('c'), type: 'image', src: '', alt: '' }),
-    describe: c => textOnly(c.alt),
+    describe: (c) => textOnly(c.alt),
   },
 
   /* -- Fenêtre détaillée -- */
@@ -139,14 +145,14 @@ export const COMPONENT_TYPES = {
     contexts: ['detail'],
     fields: [{ key: 'text', label: 'Texte', type: 'text' }],
     create: () => ({ id: newId('c'), type: 'label', text: 'Intitulé' }),
-    describe: c => textOnly(c.text),
+    describe: (c) => textOnly(c.text),
   },
   note: {
     label: 'Note discrète',
     contexts: ['detail'],
     fields: [{ key: 'text', label: 'Texte', type: 'rich' }],
     create: () => ({ id: newId('c'), type: 'note', text: 'Note' }),
-    describe: c => textOnly(c.text).slice(0, 60),
+    describe: (c) => textOnly(c.text).slice(0, 60),
   },
   profile: {
     label: 'Bandeau de profil',
@@ -158,119 +164,163 @@ export const COMPONENT_TYPES = {
       { key: 'url', label: 'Lien', type: 'url' },
       { key: 'linkLabel', label: 'Texte du lien', type: 'text' },
     ],
-    create: () => ({ id: newId('c'), type: 'profile', icon: 'github', name: 'Nom du profil', subtitle: 'Profil public', url: 'https://', linkLabel: 'Ouvrir le profil' }),
-    describe: c => textOnly(c.name),
+    create: () => ({
+      id: newId('c'),
+      type: 'profile',
+      icon: 'github',
+      name: 'Nom du profil',
+      subtitle: 'Profil public',
+      url: 'https://',
+      linkLabel: 'Ouvrir le profil',
+    }),
+    describe: (c) => textOnly(c.name),
   },
   projects: {
     label: 'Projets',
     contexts: ['detail'],
-    fields: [{
-      key: 'items',
-      label: 'Projets',
-      type: 'list',
-      itemLabel: 'Projet',
-      fields: [
-        { key: 'icon', label: 'Icône', type: 'icon', logos: false },
-        { key: 'accent', label: 'Couleur de l’icône', type: 'select', options: [{ value: 'blue', label: 'Bleu' }, { value: 'violet', label: 'Violet' }], default: 'blue' },
-        { key: 'kind', label: 'Catégorie', type: 'text' },
-        { key: 'title', label: 'Titre', type: 'text' },
-        { key: 'text', label: 'Description', type: 'rich' },
-        textList('tags', 'Étiquettes', 'Étiquette'),
-        { key: 'url', label: 'Lien', type: 'url' },
-        { key: 'linkLabel', label: 'Texte du lien', type: 'text' },
-      ],
-      create: () => ({ id: newId('p'), icon: 'cube', accent: 'blue', kind: 'Catégorie', title: 'Nouveau projet', text: '', tags: [], url: '', linkLabel: 'Voir le dépôt' }),
-      describe: item => textOnly(item.title) || '(sans titre)',
-    }],
+    fields: [
+      {
+        key: 'items',
+        label: 'Projets',
+        type: 'list',
+        itemLabel: 'Projet',
+        fields: [
+          { key: 'icon', label: 'Icône', type: 'icon', logos: false },
+          {
+            key: 'accent',
+            label: 'Couleur de l’icône',
+            type: 'select',
+            options: [
+              { value: 'blue', label: 'Bleu' },
+              { value: 'violet', label: 'Violet' },
+            ],
+            default: 'blue',
+          },
+          { key: 'kind', label: 'Catégorie', type: 'text' },
+          { key: 'title', label: 'Titre', type: 'text' },
+          { key: 'text', label: 'Description', type: 'rich' },
+          textList('tags', 'Étiquettes', 'Étiquette'),
+          { key: 'url', label: 'Lien', type: 'url' },
+          { key: 'linkLabel', label: 'Texte du lien', type: 'text' },
+        ],
+        create: () => ({
+          id: newId('p'),
+          icon: 'cube',
+          accent: 'blue',
+          kind: 'Catégorie',
+          title: 'Nouveau projet',
+          text: '',
+          tags: [],
+          url: '',
+          linkLabel: 'Voir le dépôt',
+        }),
+        describe: (item) => textOnly(item.title) || '(sans titre)',
+      },
+    ],
     create: () => ({ id: newId('c'), type: 'projects', items: [] }),
-    describe: c => (c.items || []).map(i => textOnly(i.title)).join(', '),
+    describe: (c) => (c.items || []).map((i) => textOnly(i.title)).join(', '),
   },
   tiles: {
     label: 'Tuiles avec logo',
     contexts: ['detail'],
-    fields: [{
-      key: 'items',
-      label: 'Tuiles',
-      type: 'list',
-      itemLabel: 'Tuile',
-      fields: [
-        { key: 'logo', label: 'Logo', type: 'icon', logos: true },
-        { key: 'title', label: 'Titre', type: 'text' },
-        { key: 'subtitle', label: 'Sous-titre', type: 'text' },
-      ],
-      create: () => ({ id: newId('tile'), logo: 'monitor', title: 'Nouveau logiciel', subtitle: '' }),
-      describe: item => textOnly(item.title) || '(sans titre)',
-    }],
+    fields: [
+      {
+        key: 'items',
+        label: 'Tuiles',
+        type: 'list',
+        itemLabel: 'Tuile',
+        fields: [
+          { key: 'logo', label: 'Logo', type: 'icon', logos: true },
+          { key: 'title', label: 'Titre', type: 'text' },
+          { key: 'subtitle', label: 'Sous-titre', type: 'text' },
+        ],
+        create: () => ({ id: newId('tile'), logo: 'monitor', title: 'Nouveau logiciel', subtitle: '' }),
+        describe: (item) => textOnly(item.title) || '(sans titre)',
+      },
+    ],
     create: () => ({ id: newId('c'), type: 'tiles', items: [] }),
-    describe: c => (c.items || []).map(i => textOnly(i.title)).join(', '),
+    describe: (c) => (c.items || []).map((i) => textOnly(i.title)).join(', '),
   },
   infopanels: {
     label: 'Panneaux d’information',
     contexts: ['detail'],
-    fields: [{
-      key: 'items',
-      label: 'Panneaux',
-      type: 'list',
-      itemLabel: 'Panneau',
-      fields: [
-        { key: 'icon', label: 'Icône', type: 'icon', logos: false },
-        { key: 'title', label: 'Titre', type: 'text' },
-        textList('chips', 'Pastilles', 'Pastille'),
-        keyValueList('lines', 'Lignes libellé / valeur'),
-        { key: 'note', label: 'Note (facultative)', type: 'rich' },
-      ],
-      create: () => ({ id: newId('ip'), icon: 'info', title: 'Nouveau panneau', chips: [], lines: [], note: '' }),
-      describe: item => textOnly(item.title) || '(sans titre)',
-    }],
+    fields: [
+      {
+        key: 'items',
+        label: 'Panneaux',
+        type: 'list',
+        itemLabel: 'Panneau',
+        fields: [
+          { key: 'icon', label: 'Icône', type: 'icon', logos: false },
+          { key: 'title', label: 'Titre', type: 'text' },
+          textList('chips', 'Pastilles', 'Pastille'),
+          keyValueList('lines', 'Lignes libellé / valeur'),
+          { key: 'note', label: 'Note (facultative)', type: 'rich' },
+        ],
+        create: () => ({ id: newId('ip'), icon: 'info', title: 'Nouveau panneau', chips: [], lines: [], note: '' }),
+        describe: (item) => textOnly(item.title) || '(sans titre)',
+      },
+    ],
     create: () => ({ id: newId('c'), type: 'infopanels', items: [] }),
-    describe: c => (c.items || []).map(i => textOnly(i.title)).join(', '),
+    describe: (c) => (c.items || []).map((i) => textOnly(i.title)).join(', '),
   },
   cards: {
     label: 'Cartes descriptives',
     contexts: ['detail'],
-    fields: [{
-      key: 'items',
-      label: 'Cartes',
-      type: 'list',
-      itemLabel: 'Carte',
-      fields: [
-        { key: 'icon', label: 'Icône', type: 'icon', logos: false },
-        { key: 'title', label: 'Titre', type: 'text' },
-        { key: 'text', label: 'Texte', type: 'rich' },
-        { key: 'wide', label: 'Pleine largeur', type: 'checkbox' },
-        {
-          key: 'timeline',
-          label: 'Frise (période + intitulé)',
-          type: 'list',
-          itemLabel: 'Période',
-          fields: [
-            { key: 'period', label: 'Période', type: 'text' },
-            { key: 'label', label: 'Intitulé', type: 'text' },
-          ],
-          create: () => ({ id: newId('tl'), period: '2020 – 2021', label: 'Intitulé' }),
-          describe: item => [item.period, item.label].filter(Boolean).join(' · '),
-        },
-        textList('pills', 'Pastilles', 'Pastille'),
-        {
-          key: 'entries',
-          label: 'Sous-cartes',
-          type: 'list',
-          itemLabel: 'Sous-carte',
-          fields: [
-            { key: 'title', label: 'Titre', type: 'text' },
-            { key: 'badge', label: 'Badge', type: 'text' },
-            { key: 'text', label: 'Texte', type: 'rich' },
-            textList('pills', 'Pastilles', 'Pastille'),
-          ],
-          create: () => ({ id: newId('ent'), title: 'Nouvelle sous-carte', badge: '', text: '', pills: [] }),
-          describe: item => textOnly(item.title) || '(sans titre)',
-        },
-      ],
-      create: () => ({ id: newId('card'), icon: 'star', title: 'Nouvelle carte', text: '', wide: false, timeline: [], pills: [], entries: [] }),
-      describe: item => textOnly(item.title) || '(sans titre)',
-    }],
+    fields: [
+      {
+        key: 'items',
+        label: 'Cartes',
+        type: 'list',
+        itemLabel: 'Carte',
+        fields: [
+          { key: 'icon', label: 'Icône', type: 'icon', logos: false },
+          { key: 'title', label: 'Titre', type: 'text' },
+          { key: 'text', label: 'Texte', type: 'rich' },
+          { key: 'wide', label: 'Pleine largeur', type: 'checkbox' },
+          {
+            key: 'timeline',
+            label: 'Frise (période + intitulé)',
+            type: 'list',
+            itemLabel: 'Période',
+            fields: [
+              { key: 'period', label: 'Période', type: 'text' },
+              { key: 'label', label: 'Intitulé', type: 'text' },
+            ],
+            create: () => ({ id: newId('tl'), period: '2020 – 2021', label: 'Intitulé' }),
+            describe: (item) => [item.period, item.label].filter(Boolean).join(' · '),
+          },
+          textList('pills', 'Pastilles', 'Pastille'),
+          {
+            key: 'entries',
+            label: 'Sous-cartes',
+            type: 'list',
+            itemLabel: 'Sous-carte',
+            fields: [
+              { key: 'title', label: 'Titre', type: 'text' },
+              { key: 'badge', label: 'Badge', type: 'text' },
+              { key: 'text', label: 'Texte', type: 'rich' },
+              textList('pills', 'Pastilles', 'Pastille'),
+            ],
+            create: () => ({ id: newId('ent'), title: 'Nouvelle sous-carte', badge: '', text: '', pills: [] }),
+            describe: (item) => textOnly(item.title) || '(sans titre)',
+          },
+        ],
+        create: () => ({
+          id: newId('card'),
+          icon: 'star',
+          title: 'Nouvelle carte',
+          text: '',
+          wide: false,
+          timeline: [],
+          pills: [],
+          entries: [],
+        }),
+        describe: (item) => textOnly(item.title) || '(sans titre)',
+      },
+    ],
     create: () => ({ id: newId('c'), type: 'cards', items: [] }),
-    describe: c => (c.items || []).map(i => textOnly(i.title)).join(', '),
+    describe: (c) => (c.items || []).map((i) => textOnly(i.title)).join(', '),
   },
   score: {
     label: 'Score mis en avant',
@@ -280,7 +330,7 @@ export const COMPONENT_TYPES = {
       { key: 'value', label: 'Valeur', type: 'text' },
     ],
     create: () => ({ id: newId('c'), type: 'score', label: 'Score', value: '100' }),
-    describe: c => [c.label, c.value].filter(Boolean).join(' '),
+    describe: (c) => [c.label, c.value].filter(Boolean).join(' '),
   },
 };
 
@@ -308,7 +358,7 @@ const DETAIL_FIELD = {
   ],
 };
 
-const newDetail = title => ({ id: newId('detail'), enabled: false, kicker: '', title, subtitle: '', components: [] });
+const newDetail = (title) => ({ id: newId('detail'), enabled: false, kicker: '', title, subtitle: '', components: [] });
 
 /* ------------------------------------------------------------------ */
 /* Blocs (rubriques placées dans les zones du CV)                     */
@@ -332,12 +382,12 @@ export const BLOCK_TYPES = {
           textList('details', 'Détails', 'Détail'),
         ],
         create: () => ({ id: newId('item'), date: 'Année', title: 'Nouvelle entrée', meta: '', details: [] }),
-        describe: item => [textOnly(item.date), textOnly(item.title)].filter(Boolean).join(' · ') || '(vide)',
+        describe: (item) => [textOnly(item.date), textOnly(item.title)].filter(Boolean).join(' · ') || '(vide)',
       },
       BLOCK_ANIMATION_FIELD,
     ],
     create: () => ({ id: newId('blk'), type: 'timeline', title: 'Nouvelle rubrique', items: [], animation: 'inherit' }),
-    describe: b => textOnly(b.title),
+    describe: (b) => textOnly(b.title),
   },
   panel: {
     label: 'Encadré',
@@ -348,8 +398,15 @@ export const BLOCK_TYPES = {
       DETAIL_FIELD,
       BLOCK_ANIMATION_FIELD,
     ],
-    create: () => ({ id: newId('blk'), type: 'panel', title: 'Nouvel encadré', components: [], detail: newDetail('Nouvel encadré'), animation: 'inherit' }),
-    describe: b => textOnly(b.title),
+    create: () => ({
+      id: newId('blk'),
+      type: 'panel',
+      title: 'Nouvel encadré',
+      components: [],
+      detail: newDetail('Nouvel encadré'),
+      animation: 'inherit',
+    }),
+    describe: (b) => textOnly(b.title),
   },
   linkcard: {
     label: 'Carte lien',
@@ -362,8 +419,17 @@ export const BLOCK_TYPES = {
       DETAIL_FIELD,
       BLOCK_ANIMATION_FIELD,
     ],
-    create: () => ({ id: newId('blk'), type: 'linkcard', kicker: 'Profil', label: 'Nom ↗', icon: 'link', url: '', detail: newDetail('Profil'), animation: 'inherit' }),
-    describe: b => [textOnly(b.kicker), textOnly(b.label)].filter(Boolean).join(' · '),
+    create: () => ({
+      id: newId('blk'),
+      type: 'linkcard',
+      kicker: 'Profil',
+      label: 'Nom ↗',
+      icon: 'link',
+      url: '',
+      detail: newDetail('Profil'),
+      animation: 'inherit',
+    }),
+    describe: (b) => [textOnly(b.kicker), textOnly(b.label)].filter(Boolean).join(' · '),
   },
   score: {
     label: 'Encadré certification',
@@ -376,8 +442,17 @@ export const BLOCK_TYPES = {
       DETAIL_FIELD,
       BLOCK_ANIMATION_FIELD,
     ],
-    create: () => ({ id: newId('blk'), type: 'score', title: 'Certification', score: '', image: '', imageAlt: '', detail: newDetail('Certification'), animation: 'inherit' }),
-    describe: b => [textOnly(b.title), textOnly(b.score)].filter(Boolean).join(' · '),
+    create: () => ({
+      id: newId('blk'),
+      type: 'score',
+      title: 'Certification',
+      score: '',
+      image: '',
+      imageAlt: '',
+      detail: newDetail('Certification'),
+      animation: 'inherit',
+    }),
+    describe: (b) => [textOnly(b.title), textOnly(b.score)].filter(Boolean).join(' · '),
   },
   banner: {
     label: 'Bandeau',
@@ -388,8 +463,15 @@ export const BLOCK_TYPES = {
       { key: 'text', label: 'Texte', type: 'rich' },
       BLOCK_ANIMATION_FIELD,
     ],
-    create: () => ({ id: newId('blk'), type: 'banner', icon: 'info', label: 'Intitulé', text: 'Texte du bandeau', animation: 'inherit' }),
-    describe: b => textOnly(b.text).slice(0, 60),
+    create: () => ({
+      id: newId('blk'),
+      type: 'banner',
+      icon: 'info',
+      label: 'Intitulé',
+      text: 'Texte du bandeau',
+      animation: 'inherit',
+    }),
+    describe: (b) => textOnly(b.text).slice(0, 60),
   },
 };
 
@@ -421,20 +503,38 @@ export const HERO_FIELDS = [
     type: 'list',
     itemLabel: 'Coordonnée',
     fields: [
-      { key: 'type', label: 'Type', type: 'select', options: CONTACT_TYPES.map(({ value, label }) => ({ value, label })) },
+      {
+        key: 'type',
+        label: 'Type',
+        type: 'select',
+        options: CONTACT_TYPES.map(({ value, label }) => ({ value, label })),
+      },
       { key: 'value', label: 'Texte affiché', type: 'text' },
-      { key: 'url', label: 'Lien ou recherche Google Maps (facultatif)', type: 'text', showIf: item => item.type === 'link' || item.type === 'location' },
+      {
+        key: 'url',
+        label: 'Lien ou recherche Google Maps (facultatif)',
+        type: 'text',
+        showIf: (item) => item.type === 'link' || item.type === 'location',
+      },
       { key: 'icon', label: 'Icône', type: 'icon', logos: false },
     ],
     create: () => ({ id: newId('contact'), type: 'text', value: 'Nouvelle coordonnée', url: '', icon: 'info' }),
-    describe: item => textOnly(item.value) || '(vide)',
+    describe: (item) => textOnly(item.value) || '(vide)',
   },
 ];
 
 export const DOCUMENT_FIELDS = [
   { key: 'title', label: 'Titre de la page (onglet du navigateur)', type: 'text' },
   { key: 'description', label: 'Description (métadonnée)', type: 'textarea', rows: 2 },
-  { key: 'lang', label: 'Langue du document', type: 'select', options: [{ value: 'fr', label: 'Français' }, { value: 'en', label: 'Anglais' }] },
+  {
+    key: 'lang',
+    label: 'Langue du document',
+    type: 'select',
+    options: [
+      { value: 'fr', label: 'Français' },
+      { value: 'en', label: 'Anglais' },
+    ],
+  },
   { key: 'footerLeft', label: 'Pied de page : texte à gauche (facultatif)', type: 'text' },
   { key: 'footerRight', label: 'Pied de page : texte à droite (facultatif)', type: 'text' },
 ];
@@ -442,20 +542,82 @@ export const DOCUMENT_FIELDS = [
 export const ACTION_FIELDS = [
   { key: 'download', label: 'Afficher le bouton « Télécharger / Imprimer »', type: 'checkbox' },
   { key: 'theme', label: 'Afficher le bouton « Mode jour / nuit »', type: 'checkbox' },
-  { key: 'defaultTheme', label: 'Thème à l’ouverture', type: 'select', options: [{ value: 'light', label: 'Jour' }, { value: 'dark', label: 'Nuit' }] },
+  {
+    key: 'defaultTheme',
+    label: 'Thème à l’ouverture',
+    type: 'select',
+    options: [
+      { value: 'light', label: 'Jour' },
+      { value: 'dark', label: 'Nuit' },
+    ],
+  },
 ];
 
 export const ANIMATION_FIELDS = [
   { key: 'cardArrive', label: 'Arrivée de la carte à l’ouverture', type: 'checkbox' },
-  { key: 'cardArriveDuration', label: 'Durée de l’arrivée', type: 'number', min: 100, max: 3000, step: 50, unit: 'ms', showIf: a => a.cardArrive },
+  {
+    key: 'cardArriveDuration',
+    label: 'Durée de l’arrivée',
+    type: 'number',
+    min: 100,
+    max: 3000,
+    step: 50,
+    unit: 'ms',
+    showIf: (a) => a.cardArrive,
+  },
   { key: 'reveal', label: 'Apparition des rubriques au défilement', type: 'select', options: REVEAL_OPTIONS },
-  { key: 'revealDuration', label: 'Durée de l’apparition', type: 'number', min: 100, max: 3000, step: 50, unit: 'ms', showIf: a => a.reveal !== 'none' },
-  { key: 'revealStagger', label: 'Décalage entre rubriques voisines', type: 'number', min: 0, max: 500, step: 5, unit: 'ms', showIf: a => a.reveal !== 'none' },
+  {
+    key: 'revealDuration',
+    label: 'Durée de l’apparition',
+    type: 'number',
+    min: 100,
+    max: 3000,
+    step: 50,
+    unit: 'ms',
+    showIf: (a) => a.reveal !== 'none',
+  },
+  {
+    key: 'revealStagger',
+    label: 'Décalage entre rubriques voisines',
+    type: 'number',
+    min: 0,
+    max: 500,
+    step: 5,
+    unit: 'ms',
+    showIf: (a) => a.reveal !== 'none',
+  },
   { key: 'tilt', label: 'Inclinaison 3D de la carte selon la souris', type: 'checkbox' },
-  { key: 'tiltX', label: 'Inclinaison maximale haut / bas', type: 'number', min: 0, max: 10, step: 0.1, unit: '°', showIf: a => a.tilt },
-  { key: 'tiltY', label: 'Inclinaison maximale gauche / droite', type: 'number', min: 0, max: 10, step: 0.1, unit: '°', showIf: a => a.tilt },
+  {
+    key: 'tiltX',
+    label: 'Inclinaison maximale haut / bas',
+    type: 'number',
+    min: 0,
+    max: 10,
+    step: 0.1,
+    unit: '°',
+    showIf: (a) => a.tilt,
+  },
+  {
+    key: 'tiltY',
+    label: 'Inclinaison maximale gauche / droite',
+    type: 'number',
+    min: 0,
+    max: 10,
+    step: 0.1,
+    unit: '°',
+    showIf: (a) => a.tilt,
+  },
   { key: 'hover', label: 'Effets de survol (soulèvement des cartes et boutons)', type: 'checkbox' },
-  { key: 'modal', label: 'Ouverture des fenêtres détaillées', type: 'select', options: [{ value: 'depth', label: 'En profondeur' }, { value: 'fade', label: 'Fondu' }, { value: 'none', label: 'Instantanée' }] },
+  {
+    key: 'modal',
+    label: 'Ouverture des fenêtres détaillées',
+    type: 'select',
+    options: [
+      { value: 'depth', label: 'En profondeur' },
+      { value: 'fade', label: 'Fondu' },
+      { value: 'none', label: 'Instantanée' },
+    ],
+  },
 ];
 
 export const DEFAULT_ANIMATIONS = {
@@ -543,7 +705,13 @@ export function buildTree(cv) {
         const groupChildren = listChildren(field.fields, value, groupPath);
         if (field.hideable && value.id) {
           if (value.enabled === false) continue;
-          children.push({ id: value.id, label: value.title || field.label, kind: field.label, path: groupPath, children: groupChildren });
+          children.push({
+            id: value.id,
+            label: value.title || field.label,
+            kind: field.label,
+            path: groupPath,
+            children: groupChildren,
+          });
         } else {
           children.push(...groupChildren);
         }
@@ -584,9 +752,9 @@ export function indexTree(nodes) {
   const index = new Map();
   const visit = (node, parent) => {
     index.set(node.id, { ...node, parent: parent?.id || null });
-    node.children.forEach(child => visit(child, node));
+    node.children.forEach((child) => visit(child, node));
   };
-  nodes.forEach(node => visit(node, null));
+  nodes.forEach((node) => visit(node, null));
   return index;
 }
 
@@ -600,7 +768,10 @@ export function findPathById(cv, id) {
   let found = null;
   const visit = (node, path) => {
     if (found || !node || typeof node !== 'object') return;
-    if (!Array.isArray(node) && node.id === id) { found = path; return; }
+    if (!Array.isArray(node) && node.id === id) {
+      found = path;
+      return;
+    }
     for (const [key, value] of Object.entries(node)) {
       if (value && typeof value === 'object') visit(value, [...path, Array.isArray(node) ? Number(key) : key]);
     }

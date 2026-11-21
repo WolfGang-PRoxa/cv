@@ -8,8 +8,8 @@ const api = window.studio;
 export const state = {
   info: null,
   template: null,
-  base: null,       // CV de référence enregistré
-  cvs: [],          // CV générés
+  base: null, // CV de référence enregistré
+  cvs: [], // CV générés
   settings: null,
   update: { state: 'idle' },
   sync: { mode: 'off', state: 'idle' },
@@ -25,7 +25,7 @@ export function on(event, callback) {
 }
 
 export function emit(event, payload) {
-  listeners.get(event)?.forEach(callback => callback(payload));
+  listeners.get(event)?.forEach((callback) => callback(payload));
 }
 
 export async function loadAll() {
@@ -39,11 +39,11 @@ export async function loadAll() {
     api.sync.status(),
   ]);
   Object.assign(state, { info, template, base: normalizeCv(base), cvs, settings, update, sync });
-  api.onUpdateStatus(status => {
+  api.onUpdateStatus((status) => {
     state.update = status;
     emit('update', status);
   });
-  api.sync.onStatus(status => {
+  api.sync.onStatus((status) => {
     state.sync = status;
     emit('sync', status);
   });

@@ -7,6 +7,7 @@ Application de bureau Windows pour tenir à jour un **CV de référence** et en 
 ## Fonctionnalités
 
 ### Mes CV
+
 - Liste des CV générés, avec aperçu en direct.
 - Export en **PDF** (format A4, mise en page d'impression) ou en **page HTML** autonome, ouverture dans le navigateur.
 - Renommage, duplication, suppression.
@@ -14,11 +15,13 @@ Application de bureau Windows pour tenir à jour un **CV de référence** et en 
 - Signalement des CV créés avant une modification de la base, et mise à jour en un clic : le contenu de la base est repris, les éléments masqués sont conservés.
 
 ### Nouveau CV
+
 - Nom et notes personnelles (destinataire, offre visée…).
 - Arbre de tous les éléments du CV de référence : une case décochée masque l'élément et tout ce qu'il contient.
 - Filtre de recherche dans l'arbre et aperçu instantané du résultat.
 
 ### CV de référence (éditeur)
+
 - **Structure** : en-tête, puis trois zones (haut de page, colonne principale, colonne latérale). Les blocs se déplacent par glisser-déposer, y compris d'une zone à l'autre. Ils s'ajoutent, se dupliquent et se suppriment.
 - **Types de blocs** : rubrique chronologique (formations, expériences), encadré libre, carte lien, encadré de certification, bandeau.
 - **Contenu** : formulaires générés pour chaque bloc. Les listes d'entrées se réordonnent par glisser-déposer. Le sélecteur d'icônes et le choix d'image sont intégrés.
@@ -28,18 +31,22 @@ Application de bureau Windows pour tenir à jour un **CV de référence** et en 
 - Annuler / rétablir (Ctrl+Z, Ctrl+Y) et enregistrement (Ctrl+S). Chaque enregistrement crée une nouvelle version de la base.
 
 ### Mise en forme du texte
+
 Dans les champs de texte long :
+
 - `**texte**` affiche le texte en gras ;
 - un retour à la ligne est conservé dans le CV.
 
 ### Paramètres
+
 - **Mises à jour automatiques** (activées par défaut) : au lancement, l'application vérifie les releases GitHub, télécharge la nouvelle version en arrière-plan et l'installe à la fermeture. Un bouton permet aussi de redémarrer immédiatement pour l'installer.
 - **Synchronisation entre postes** : le CV de référence et les CV générés se retrouvent automatiquement sur chacun de ses ordinateurs. Trois choix :
-  - *Désactivée* (par défaut) : les données restent sur le poste ;
-  - *Dossier synchronisé* : les données sont enregistrées dans un dossier choisi (OneDrive, Dropbox, Google Drive…), que ce service synchronise. Un dossier qui contient déjà des données (créées sur un autre poste) est utilisé tel quel ; sinon les données du poste y sont copiées. Une modification faite ailleurs est rechargée aussitôt ;
-  - *GitHub, chiffré* : les données sont chiffrées par un mot de passe (AES-256-GCM, clé dérivée par scrypt) puis envoyées dans un Gist secret du compte GitHub de l'utilisateur. GitHub ne reçoit que des données illisibles, y compris les noms de fichiers ; le mot de passe n'est jamais transmis et sa clé est gardée chiffrée par Windows. Envoi trois secondes après chaque enregistrement, récupération au lancement, au retour sur la fenêtre et toutes les dix minutes. Le même mot de passe est demandé sur chaque poste (un mot de passe différent est refusé). Un CV modifié sur deux postes entre deux synchronisations est conservé en deux exemplaires ; pour le CV de référence, l'application demande quelle version garder et enregistre l'autre dans le dossier de l'application.
+  - _Désactivée_ (par défaut) : les données restent sur le poste ;
+  - _Dossier synchronisé_ : les données sont enregistrées dans un dossier choisi (OneDrive, Dropbox, Google Drive…), que ce service synchronise. Un dossier qui contient déjà des données (créées sur un autre poste) est utilisé tel quel ; sinon les données du poste y sont copiées. Une modification faite ailleurs est rechargée aussitôt ;
+  - _GitHub, chiffré_ : les données sont chiffrées par un mot de passe (AES-256-GCM, clé dérivée par scrypt) puis envoyées dans un Gist secret du compte GitHub de l'utilisateur. GitHub ne reçoit que des données illisibles, y compris les noms de fichiers ; le mot de passe n'est jamais transmis et sa clé est gardée chiffrée par Windows. Envoi trois secondes après chaque enregistrement, récupération au lancement, au retour sur la fenêtre et toutes les dix minutes. Le même mot de passe est demandé sur chaque poste (un mot de passe différent est refusé). Un CV modifié sur deux postes entre deux synchronisations est conservé en deux exemplaires ; pour le CV de référence, l'application demande quelle version garder et enregistre l'autre dans le dossier de l'application.
 
   Les paramètres (fenêtre, thème, jeton) restent propres à chaque poste. Le jeton utilisé est celui de « Publication sur GitHub » ou de GitHub CLI ; un jeton à accès précis doit avoir la permission de compte « Gists » en lecture et écriture.
+
 - **Raccourcis** : création d'un raccourci « CV Studio » sur le Bureau et dans le menu Démarrer. Pour chaque emplacement, l'application indique ce qu'elle trouve et agit en conséquence :
   - aucun raccourci : bouton « Créer le raccourci » ;
   - raccourci valide (y compris sous un autre nom, ou dans un sous-dossier du menu Démarrer) : il est signalé et rien n'est recréé ; il peut être affiché dans l'Explorateur ou mis à la corbeille ;
@@ -47,6 +54,7 @@ Dans les champs de texte long :
   - fichier « CV Studio.lnk » qui ouvre un autre programme : remplacement uniquement après confirmation.
 
   Les raccourcis portent le nom de ceux de l'installeur : la désinstallation les retire aussi. L'état est relu à chaque retour dans l'application (raccourci supprimé depuis l'Explorateur, par exemple).
+
 - **Fenêtre au lancement** : grande fenêtre (agrandie, par défaut) ou taille et position personnalisées. Le réglage personnalisé se fait dans un cadre qui représente les écrans à l'échelle : le rectangle de la fenêtre s'y déplace et s'y redimensionne à la souris (ou au clavier : flèches, Maj pour un pas plus grand, Alt pour redimensionner). Quatre champs (largeur, hauteur, position X, position Y) permettent un réglage précis. Si l'emplacement enregistré n'est plus visible (écran débranché), la fenêtre s'ouvre agrandie.
 - **Publication sur GitHub** : dépôt cible (par défaut, celui de l'application) et connexion. L'application utilise le jeton personnel enregistré (chiffré par Windows, jamais transmis à l'interface), sinon celui de GitHub CLI (`gh auth login`). Un jeton à accès précis limité au dépôt, avec la permission « Contents » en lecture et écriture, suffit.
 - **Apparence** : thème de l'application (selon Windows, clair ou sombre).
@@ -63,12 +71,12 @@ L'installation se fait pour l'utilisateur courant, sans droits administrateur. L
 
 Les données sont enregistrées dans `%APPDATA%\CV Studio` (la base et les CV peuvent être placés dans un dossier synchronisé, voir « Synchronisation entre postes ») :
 
-| Fichier | Contenu |
-|---|---|
-| `base.json` | CV de référence (avec son numéro de version) |
-| `cvs/<id>.json` | CV générés : nom, notes, éléments masqués et instantané de la base au moment de la création |
-| `settings.json` | Paramètres de l'application (propres au poste) |
-| `sync-state.json` | État de la dernière synchronisation GitHub (empreintes des éléments) |
+| Fichier           | Contenu                                                                                     |
+| ----------------- | ------------------------------------------------------------------------------------------- |
+| `base.json`       | CV de référence (avec son numéro de version)                                                |
+| `cvs/<id>.json`   | CV générés : nom, notes, éléments masqués et instantané de la base au moment de la création |
+| `settings.json`   | Paramètres de l'application (propres au poste)                                              |
+| `sync-state.json` | État de la dernière synchronisation GitHub (empreintes des éléments)                        |
 
 Au premier lancement, la base est initialisée avec un CV d'exemple fictif (Camille Martin) livré dans l'application. Pour partir de son propre CV, utiliser « Importer une base (JSON) » dans les paramètres. Aucune donnée personnelle n'est livrée dans l'application ni dans ce dépôt public. La désinstallation conserve ce dossier.
 

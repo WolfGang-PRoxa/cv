@@ -8,14 +8,14 @@ contextBridge.exposeInMainWorld('studio', {
   getTemplate: () => invoke('template:get'),
 
   getBase: () => invoke('base:get'),
-  saveBase: cv => invoke('base:save', cv),
+  saveBase: (cv) => invoke('base:save', cv),
   getBundledBase: () => invoke('base:bundled'),
   exportBaseJson: (data, name) => invoke('base:export-json', { data, name }),
   importBaseJson: () => invoke('base:import-json'),
 
   listCvs: () => invoke('cvs:list'),
-  saveCv: cv => invoke('cvs:save', cv),
-  deleteCv: id => invoke('cvs:delete', id),
+  saveCv: (cv) => invoke('cvs:save', cv),
+  deleteCv: (id) => invoke('cvs:delete', id),
 
   exportHtml: (html, name) => invoke('export:html', { html, name }),
   exportPdf: (html, name) => invoke('export:pdf', { html, name }),
@@ -23,18 +23,18 @@ contextBridge.exposeInMainWorld('studio', {
   openDataFolder: () => invoke('data:open-folder'),
 
   getSettings: () => invoke('settings:get'),
-  saveSettings: partial => invoke('settings:save', partial),
+  saveSettings: (partial) => invoke('settings:save', partial),
   getDisplays: () => invoke('window:displays'),
   getWindowBounds: () => invoke('window:bounds'),
 
   github: {
     status: () => invoke('github:status'),
-    saveToken: token => invoke('github:save-token', token),
+    saveToken: (token) => invoke('github:save-token', token),
     releases: () => invoke('github:releases'),
-    publish: payload => invoke('github:publish', payload),
-    deleteRelease: release => invoke('github:delete-release', release),
-    open: url => invoke('github:open', url),
-    onProgress: callback => {
+    publish: (payload) => invoke('github:publish', payload),
+    deleteRelease: (release) => invoke('github:delete-release', release),
+    open: (url) => invoke('github:open', url),
+    onProgress: (callback) => {
       const listener = (_event, progress) => callback(progress);
       ipcRenderer.on('github:progress', listener);
       return () => ipcRenderer.removeListener('github:progress', listener);
@@ -44,15 +44,15 @@ contextBridge.exposeInMainWorld('studio', {
   sync: {
     status: () => invoke('sync:status'),
     chooseFolder: () => invoke('sync:choose-folder'),
-    enableGist: passphrase => invoke('sync:enable-gist', passphrase),
+    enableGist: (passphrase) => invoke('sync:enable-gist', passphrase),
     disable: () => invoke('sync:disable'),
     now: () => invoke('sync:now'),
-    onStatus: callback => {
+    onStatus: (callback) => {
       const listener = (_event, status) => callback(status);
       ipcRenderer.on('sync:status', listener);
       return () => ipcRenderer.removeListener('sync:status', listener);
     },
-    onDataChanged: callback => {
+    onDataChanged: (callback) => {
       const listener = () => callback();
       ipcRenderer.on('sync:data-changed', listener);
       return () => ipcRenderer.removeListener('sync:data-changed', listener);
@@ -62,14 +62,14 @@ contextBridge.exposeInMainWorld('studio', {
   shortcuts: {
     status: () => invoke('shortcuts:status'),
     create: (id, options) => invoke('shortcuts:create', id, options),
-    remove: id => invoke('shortcuts:remove', id),
-    reveal: id => invoke('shortcuts:reveal', id),
+    remove: (id) => invoke('shortcuts:remove', id),
+    reveal: (id) => invoke('shortcuts:reveal', id),
   },
 
   checkForUpdates: () => invoke('update:check'),
   getUpdateStatus: () => invoke('update:status'),
   installUpdate: () => invoke('update:install'),
-  onUpdateStatus: callback => {
+  onUpdateStatus: (callback) => {
     const listener = (_event, status) => callback(status);
     ipcRenderer.on('update:status', listener);
     return () => ipcRenderer.removeListener('update:status', listener);

@@ -53,7 +53,7 @@ const cvFile = (root, id) => path.join(root, 'cvs', `${String(id).replace(/[^\w-
 const paths = {
   base: () => path.join(dataDir(), 'base.json'),
   cvs: () => path.join(dataDir(), 'cvs'),
-  cv: id => cvFile(dataDir(), id),
+  cv: (id) => cvFile(dataDir(), id),
   settings: () => path.join(appDataDir(), 'settings.json'),
   syncState: () => path.join(appDataDir(), 'sync-state.json'),
 };
@@ -104,7 +104,7 @@ export async function writeBase(cv) {
 
 export async function listCvs() {
   await fs.mkdir(paths.cvs(), { recursive: true });
-  const files = (await fs.readdir(paths.cvs())).filter(name => name.endsWith('.json'));
+  const files = (await fs.readdir(paths.cvs())).filter((name) => name.endsWith('.json'));
   const cvs = [];
   for (const name of files) {
     try {
@@ -122,12 +122,12 @@ export async function writeCv(cv) {
   // contentUpdatedAt ne change que si le contenu affiché change (instantané ou éléments
   // masqués) : renommer ou enregistrer une publication ne compte pas comme une modification.
   const previous = await readJson(paths.cv(cv.id), null);
-  const contentKey = value => JSON.stringify([value?.snapshot ?? null, [...(value?.hidden || [])].sort()]);
+  const contentKey = (value) => JSON.stringify([value?.snapshot ?? null, [...(value?.hidden || [])].sort()]);
   const contentChanged = !previous || contentKey(previous) !== contentKey(cv);
   const saved = {
     ...cv,
     updatedAt: now,
-    contentUpdatedAt: contentChanged ? now : (previous.contentUpdatedAt || previous.updatedAt || now),
+    contentUpdatedAt: contentChanged ? now : previous.contentUpdatedAt || previous.updatedAt || now,
   };
   await writeJson(paths.cv(cv.id), saved);
   return saved;
@@ -219,7 +219,11 @@ export async function copyData(fromDir, toDir) {
   const base = await readJson(path.join(fromDir, 'base.json'), null);
   if (base) await writeJson(path.join(toDir, 'base.json'), base);
   let names = [];
-  try { names = (await fs.readdir(path.join(fromDir, 'cvs'))).filter(name => name.endsWith('.json')); } catch { /* aucun CV */ }
+  try {
+    names = (await fs.readdir(path.join(fromDir, 'cvs'))).filter((name) => name.endsWith('.json'));
+  } catch {
+    /* aucun CV */
+  }
   for (const name of names) {
     const cv = await readJson(path.join(fromDir, 'cvs', name), null);
     if (cv?.id) await writeJson(cvFile(toDir, cv.id), cv);

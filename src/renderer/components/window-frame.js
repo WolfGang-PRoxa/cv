@@ -17,24 +17,37 @@ export function createWindowFrame({ displays, bounds, min, onChange, onCommit })
   let rect = { ...bounds };
 
   // Étendue de l'ensemble des écrans (coordonnées du bureau virtuel).
-  const desk = displays.reduce((acc, d) => ({
-    left: Math.min(acc.left, d.bounds.x),
-    top: Math.min(acc.top, d.bounds.y),
-    right: Math.max(acc.right, d.bounds.x + d.bounds.width),
-    bottom: Math.max(acc.bottom, d.bounds.y + d.bounds.height),
-  }), { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity });
+  const desk = displays.reduce(
+    (acc, d) => ({
+      left: Math.min(acc.left, d.bounds.x),
+      top: Math.min(acc.top, d.bounds.y),
+      right: Math.max(acc.right, d.bounds.x + d.bounds.width),
+      bottom: Math.max(acc.bottom, d.bounds.y + d.bounds.height),
+    }),
+    { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity },
+  );
   const deskWidth = desk.right - desk.left;
   const deskHeight = desk.bottom - desk.top;
 
   const surface = h('div', { class: 'frame-surface' });
-  const windowBox = h('div', { class: 'frame-window', tabindex: '0', 'aria-label': 'Fenêtre de l’application (déplacer ou redimensionner)' },
+  const windowBox = h(
+    'div',
+    { class: 'frame-window', tabindex: '0', 'aria-label': 'Fenêtre de l’application (déplacer ou redimensionner)' },
     h('div', { class: 'frame-window-bar' }, h('span', {}), h('span', {}), h('span', {})),
     h('div', { class: 'frame-window-label' }),
-    HANDLES.map(dir => h('span', { class: `frame-handle frame-handle--${dir}`, dataset: { dir } })),
+    HANDLES.map((dir) => h('span', { class: `frame-handle frame-handle--${dir}`, dataset: { dir } })),
   );
-  const screens = displays.map(display => h('div', { class: `frame-screen${display.primary ? ' is-primary' : ''}` },
-    h('span', { class: 'frame-screen-label' }, `Écran ${display.index}${display.primary ? ' (principal)' : ''} · ${display.bounds.width}×${display.bounds.height}`),
-  ));
+  const screens = displays.map((display) =>
+    h(
+      'div',
+      { class: `frame-screen${display.primary ? ' is-primary' : ''}` },
+      h(
+        'span',
+        { class: 'frame-screen-label' },
+        `Écran ${display.index}${display.primary ? ' (principal)' : ''} · ${display.bounds.width}×${display.bounds.height}`,
+      ),
+    ),
+  );
   surface.append(...screens, windowBox);
   const element = h('div', { class: 'frame' }, surface);
 
@@ -63,7 +76,8 @@ export function createWindowFrame({ displays, bounds, min, onChange, onCommit })
       width: `${rect.width * scale}px`,
       height: `${rect.height * scale}px`,
     });
-    windowBox.querySelector('.frame-window-label').textContent = `${Math.round(rect.width)} × ${Math.round(rect.height)}`;
+    windowBox.querySelector('.frame-window-label').textContent =
+      `${Math.round(rect.width)} × ${Math.round(rect.height)}`;
   }
 
   function clampRect(next) {
@@ -74,19 +88,20 @@ export function createWindowFrame({ displays, bounds, min, onChange, onCommit })
     return { x: Math.round(x), y: Math.round(y), width: Math.round(width), height: Math.round(height) };
   }
 
-  windowBox.addEventListener('pointerdown', event => {
+  windowBox.addEventListener('pointerdown', (event) => {
     event.preventDefault();
     const dir = event.target.dataset.dir || 'move';
     const start = { px: event.clientX, py: event.clientY, rect: { ...rect } };
     windowBox.setPointerCapture(event.pointerId);
     windowBox.classList.add('is-active');
 
-    const onMove = moveEvent => {
+    const onMove = (moveEvent) => {
       const dx = (moveEvent.clientX - start.px) / scale;
       const dy = (moveEvent.clientY - start.py) / scale;
       const r = { ...start.rect };
       if (dir === 'move') {
-        r.x += dx; r.y += dy;
+        r.x += dx;
+        r.y += dy;
       } else {
         if (dir.includes('e')) r.width = start.rect.width + dx;
         if (dir.includes('s')) r.height = start.rect.height + dy;
@@ -118,14 +133,20 @@ export function createWindowFrame({ displays, bounds, min, onChange, onCommit })
   });
 
   // Déplacement au clavier (flèches ; Maj = pas de 50 px ; Alt = redimensionner).
-  windowBox.addEventListener('keydown', event => {
+  windowBox.addEventListener('keydown', (event) => {
     const keys = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
     if (!keys[event.key]) return;
     event.preventDefault();
     const step = event.shiftKey ? 50 : 10;
     const [dx, dy] = keys[event.key];
     const r = { ...rect };
-    if (event.altKey) { r.width += dx * step; r.height += dy * step; } else { r.x += dx * step; r.y += dy * step; }
+    if (event.altKey) {
+      r.width += dx * step;
+      r.height += dy * step;
+    } else {
+      r.x += dx * step;
+      r.y += dy * step;
+    }
     rect = clampRect(r);
     paint();
     onChange?.(rect);

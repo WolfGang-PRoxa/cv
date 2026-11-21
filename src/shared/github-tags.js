@@ -7,7 +7,8 @@ export const CV_TAG_PREFIX = 'cv-';
 /** Transforme un nom libre en segment de tag ou de nom de fichier (ASCII, tirets). */
 export function slugify(text, fallback = 'cv') {
   const slug = String(text || '')
-    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
     .replace(/[^A-Za-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .toLowerCase()
@@ -20,7 +21,8 @@ export function slugify(text, fallback = 'cv') {
 export function validateCvTag(tag) {
   const value = String(tag || '').trim();
   if (!value.startsWith(CV_TAG_PREFIX)) return `le tag doit commencer par « ${CV_TAG_PREFIX} ».`;
-  if (!/^cv-[A-Za-z0-9._-]+$/.test(value)) return 'le tag ne peut contenir que des lettres sans accent, des chiffres, des points et des tirets.';
+  if (!/^cv-[A-Za-z0-9._-]+$/.test(value))
+    return 'le tag ne peut contenir que des lettres sans accent, des chiffres, des points et des tirets.';
   if (/\.\.|\.lock$|\.$/.test(value)) return 'tag invalide.';
   return null;
 }

@@ -21,11 +21,14 @@ const updateBanner = document.getElementById('update-banner');
 
 /* -- Garde des modifications non enregistrées ------------------------ */
 function setDirty(viewName, dirty) {
-  if (dirty) state.dirtyGuards.add(viewName); else state.dirtyGuards.delete(viewName);
-  document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('has-changes', state.dirtyGuards.has(item.dataset.view)));
+  if (dirty) state.dirtyGuards.add(viewName);
+  else state.dirtyGuards.delete(viewName);
+  document
+    .querySelectorAll('.nav-item')
+    .forEach((item) => item.classList.toggle('has-changes', state.dirtyGuards.has(item.dataset.view)));
 }
 
-window.addEventListener('beforeunload', event => {
+window.addEventListener('beforeunload', (event) => {
   if (state.dirtyGuards.size) {
     event.preventDefault();
     event.returnValue = '';
@@ -48,19 +51,31 @@ async function navigate(name, params = {}) {
   viewHost.className = `view view--${name}`;
   const view = VIEWS[name];
   current = { name, unmount: null };
-  current.unmount = view.module.mount(viewHost, params, {
-    navigate,
-    setDirty: dirty => setDirty(name, dirty),
-  }) || null;
+  current.unmount =
+    view.module.mount(viewHost, params, {
+      navigate,
+      setDirty: (dirty) => setDirty(name, dirty),
+    }) || null;
   const active = view.parent || name;
-  document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('is-active', item.dataset.view === active));
+  document
+    .querySelectorAll('.nav-item')
+    .forEach((item) => item.classList.toggle('is-active', item.dataset.view === active));
 }
 
 function renderNav() {
-  nav.replaceChildren(...Object.entries(VIEWS)
-    .filter(([, view]) => view.label)
-    .map(([name, view]) => h('button', { type: 'button', class: 'nav-item', dataset: { view: name }, onClick: () => navigate(name) },
-      uiIcon(view.icon, 18), h('span', {}, view.label), h('span', { class: 'nav-dot', title: 'Modifications non enregistrées' }))));
+  nav.replaceChildren(
+    ...Object.entries(VIEWS)
+      .filter(([, view]) => view.label)
+      .map(([name, view]) =>
+        h(
+          'button',
+          { type: 'button', class: 'nav-item', dataset: { view: name }, onClick: () => navigate(name) },
+          uiIcon(view.icon, 18),
+          h('span', {}, view.label),
+          h('span', { class: 'nav-dot', title: 'Modifications non enregistrées' }),
+        ),
+      ),
+  );
 }
 
 /* -- Mises à jour ------------------------------------------------------ */
@@ -68,13 +83,19 @@ function renderUpdateBanner(status) {
   const visible = ['available', 'downloading', 'downloaded'].includes(status?.state);
   updateBanner.hidden = !visible;
   if (!visible) return;
-  updateBanner.replaceChildren(...[
-    uiIcon('refresh', 16),
-    h('span', {}, settingsView.describeUpdate(status)),
-    status.state === 'downloaded'
-      ? h('button', { type: 'button', class: 'btn btn--primary btn--small', onClick: () => api.installUpdate() }, 'Redémarrer et installer')
-      : null,
-  ].filter(Boolean));
+  updateBanner.replaceChildren(
+    ...[
+      uiIcon('refresh', 16),
+      h('span', {}, settingsView.describeUpdate(status)),
+      status.state === 'downloaded'
+        ? h(
+            'button',
+            { type: 'button', class: 'btn btn--primary btn--small', onClick: () => api.installUpdate() },
+            'Redémarrer et installer',
+          )
+        : null,
+    ].filter(Boolean),
+  );
 }
 
 /* -- Thème de l'application ------------------------------------------ */
@@ -88,7 +109,9 @@ async function start() {
   try {
     await loadAll();
   } catch (error) {
-    viewHost.replaceChildren(h('div', { class: 'empty empty--large' }, h('p', {}, `Chargement impossible : ${error.message}`)));
+    viewHost.replaceChildren(
+      h('div', { class: 'empty empty--large' }, h('p', {}, `Chargement impossible : ${error.message}`)),
+    );
     return;
   }
   applyAppTheme();
@@ -96,7 +119,7 @@ async function start() {
   document.getElementById('app-version').textContent = `v${state.info.version}`;
   renderNav();
   renderUpdateBanner(state.update);
-  on('update', status => {
+  on('update', (status) => {
     renderUpdateBanner(status);
     if (status.state === 'downloaded') toast(`Mise à jour ${status.version} téléchargée`);
   });

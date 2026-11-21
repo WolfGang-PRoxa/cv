@@ -37,31 +37,77 @@ export function createPreview({ selectable = false, onSelect } = {}) {
   const stage = h('div', { class: 'preview-stage' }, iframe);
   const viewport = h('div', { class: 'preview-viewport' }, stage);
 
-  const deviceSelect = h('select', { class: 'input input--small', title: 'Largeur d’écran simulée', onChange: event => {
-    device = preferredDevice = event.target.value;
-    layout();
-  } }, DEVICES.map(d => h('option', { value: d.value, selected: d.value === device }, `${d.label} · ${d.width}px`)));
+  const deviceSelect = h(
+    'select',
+    {
+      class: 'input input--small',
+      title: 'Largeur d’écran simulée',
+      onChange: (event) => {
+        device = preferredDevice = event.target.value;
+        layout();
+      },
+    },
+    DEVICES.map((d) => h('option', { value: d.value, selected: d.value === device }, `${d.label} · ${d.width}px`)),
+  );
 
-  const themeButton = h('button', { type: 'button', class: 'btn btn--ghost btn--small', title: 'Basculer jour / nuit dans l’aperçu', onClick: () => {
-    theme = preferredTheme = theme === 'dark' ? 'light' : 'dark';
-    syncThemeButton();
-    post({ type: 'theme', theme });
-  } });
-  const syncThemeButton = () => themeButton.replaceChildren(uiIcon(theme === 'dark' ? 'sun' : 'moon', 15), h('span', {}, theme === 'dark' ? 'Jour' : 'Nuit'));
+  const themeButton = h('button', {
+    type: 'button',
+    class: 'btn btn--ghost btn--small',
+    title: 'Basculer jour / nuit dans l’aperçu',
+    onClick: () => {
+      theme = preferredTheme = theme === 'dark' ? 'light' : 'dark';
+      syncThemeButton();
+      post({ type: 'theme', theme });
+    },
+  });
+  const syncThemeButton = () =>
+    themeButton.replaceChildren(
+      uiIcon(theme === 'dark' ? 'sun' : 'moon', 15),
+      h('span', {}, theme === 'dark' ? 'Jour' : 'Nuit'),
+    );
   syncThemeButton();
 
-  const replayButton = h('button', { type: 'button', class: 'btn btn--ghost btn--small', title: 'Rejouer les animations d’ouverture', onClick: () => {
-    lastScroll = 0;
-    renderNow({ instant: false });
-  } }, uiIcon('play', 14), h('span', {}, 'Animations'));
+  const replayButton = h(
+    'button',
+    {
+      type: 'button',
+      class: 'btn btn--ghost btn--small',
+      title: 'Rejouer les animations d’ouverture',
+      onClick: () => {
+        lastScroll = 0;
+        renderNow({ instant: false });
+      },
+    },
+    uiIcon('play', 14),
+    h('span', {}, 'Animations'),
+  );
 
   const selectButton = selectable
-    ? h('button', { type: 'button', class: 'btn btn--ghost btn--small', 'aria-pressed': 'false', title: 'Cliquer sur un élément de l’aperçu pour le modifier', onClick: () => setSelectMode(!selectMode) },
-      uiIcon('pointer', 14), h('span', {}, 'Sélectionner'))
+    ? h(
+        'button',
+        {
+          type: 'button',
+          class: 'btn btn--ghost btn--small',
+          'aria-pressed': 'false',
+          title: 'Cliquer sur un élément de l’aperçu pour le modifier',
+          onClick: () => setSelectMode(!selectMode),
+        },
+        uiIcon('pointer', 14),
+        h('span', {}, 'Sélectionner'),
+      )
     : null;
 
   const extraSlot = h('div', { class: 'preview-extra' });
-  const toolbar = h('div', { class: 'preview-toolbar' }, deviceSelect, themeButton, replayButton, selectButton, h('div', { class: 'spacer' }), extraSlot);
+  const toolbar = h(
+    'div',
+    { class: 'preview-toolbar' },
+    deviceSelect,
+    themeButton,
+    replayButton,
+    selectButton,
+    h('div', { class: 'spacer' }),
+    extraSlot,
+  );
   const element = h('section', { class: 'preview' }, toolbar, viewport);
 
   function setSelectMode(enabled) {
@@ -76,7 +122,7 @@ export function createPreview({ selectable = false, onSelect } = {}) {
   }
 
   function layout() {
-    const width = DEVICES.find(d => d.value === device)?.width || 1700;
+    const width = DEVICES.find((d) => d.value === device)?.width || 1700;
     const available = Math.max(viewport.clientWidth - 2, 50);
     const scale = Math.min(1, available / width);
     const height = Math.max(viewport.clientHeight / scale, 300);

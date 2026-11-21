@@ -6,7 +6,10 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 function safeFileName(name, extension) {
-  const base = String(name || 'CV').replace(/[<>:"/\\|?*\u0000-\u001f]/g, '').trim() || 'CV';
+  const base =
+    String(name || 'CV')
+      .replace(/[<>:"/\\|?*\u0000-\u001f]/g, '')
+      .trim() || 'CV';
   return `${base}.${extension}`;
 }
 
@@ -52,7 +55,7 @@ export async function renderPdfBuffer(html) {
   try {
     await printer.loadFile(source);
     // Laisse le temps aux images intégrées et aux polices de se décoder.
-    await new Promise(resolve => setTimeout(resolve, 400));
+    await new Promise((resolve) => setTimeout(resolve, 400));
     return await printer.webContents.printToPDF({
       printBackground: true,
       preferCSSPageSize: true,
