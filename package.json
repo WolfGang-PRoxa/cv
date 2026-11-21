@@ -4,7 +4,7 @@
   "version": "0.5.0",
   "description": "Application de bureau pour éditer un CV de référence et générer des variantes de CV.",
   "author": "WolfGang-PRoxa",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "main": "src/main/main.js",
