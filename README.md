@@ -1,166 +1,186 @@
+[Français](README.fr.md)
+
 # CV Studio
 
-Application de bureau Windows pour tenir à jour un **CV de référence** et en générer des **variantes** : chaque CV généré reprend la base en masquant certains éléments (une rubrique, une expérience, une coordonnée, une fenêtre détaillée…). Les CV s'exportent en PDF ou en page HTML autonome, avec les animations et le mode jour / nuit.
+Windows desktop app to maintain a **reference CV** and generate **variants** of it: each generated CV reuses the base while hiding some elements (a section, a job, a contact detail, a detail window…). CVs export to PDF or to a standalone HTML page, with animations and light / dark mode.
 
-![Icône de CV Studio](build/icon.png)
+The app interface is in French; labels below are given in English, with the French label in quotes where it helps.
 
-## Fonctionnalités
+![CV Studio icon](build/icon.png)
 
-### Mes CV
+## Features
 
-- Liste des CV générés, avec aperçu en direct.
-- Export en **PDF** (format A4, mise en page d'impression) ou en **page HTML** autonome, ouverture dans le navigateur.
-- Renommage, duplication, suppression.
-- **Publication sur GitHub** : le bouton « Publier » crée une release GitHub contenant le PDF et la page HTML du CV, avec un titre, un tag (`cv-<nom>-v<n>`, proposé automatiquement) et une description facultative. Les publications de chaque CV sont listées avec leurs fichiers, peuvent être relues depuis GitHub (« Actualiser ») ou supprimées. Un badge signale un CV modifié depuis sa dernière publication.
-- Signalement des CV créés avant une modification de la base, et mise à jour en un clic : le contenu de la base est repris, les éléments masqués sont conservés.
+### My CVs
 
-### Nouveau CV
+- List of generated CVs, with a live preview.
+- Export to **PDF** (A4, print layout) or to a standalone **HTML page**, opened in the browser.
+- Rename, duplicate, delete.
+- **Publish to GitHub**: the “Publier” button creates a GitHub release holding the CV’s PDF and HTML page, with a title, a tag (`cv-<name>-v<n>`, suggested automatically) and an optional description. Each CV’s releases are listed with their files, can be reloaded from GitHub (“Actualiser”) or deleted. A badge flags a CV changed since its last release.
+- CVs created before a change to the base are flagged and can be updated in one click: the base content is taken over and hidden elements are kept.
 
-- Nom et notes personnelles (destinataire, offre visée…).
-- Arbre de tous les éléments du CV de référence : une case décochée masque l'élément et tout ce qu'il contient.
-- Filtre de recherche dans l'arbre et aperçu instantané du résultat.
+### New CV
 
-### CV de référence (éditeur)
+- Name and personal notes (recipient, job offer…).
+- Tree of every element of the reference CV: an unchecked box hides the element and everything inside it.
+- Search filter in the tree and instant preview of the result.
 
-- **Structure** : en-tête, puis trois zones (haut de page, colonne principale, colonne latérale). Les blocs se déplacent par glisser-déposer, y compris d'une zone à l'autre. Ils s'ajoutent, se dupliquent et se suppriment.
-- **Types de blocs** : rubrique chronologique (formations, expériences), encadré libre, carte lien, encadré de certification, bandeau.
-- **Contenu** : formulaires générés pour chaque bloc. Les listes d'entrées se réordonnent par glisser-déposer. Le sélecteur d'icônes et le choix d'image sont intégrés.
-- **Fenêtres détaillées** : chaque encadré peut ouvrir une fenêtre détaillée, composée librement (projets, tuiles avec logo, panneaux d'information, cartes avec frise ou sous-cartes, score, image, notes…).
-- **Animations** : arrivée de la carte, apparition des rubriques (fondu, zoom, glissement ou aucune), durées, inclinaison 3D selon la souris, effets de survol, ouverture des fenêtres détaillées. Chaque bloc peut choisir sa propre animation d'apparition.
-- **Aperçu** : rendu à la largeur d'un vrai écran (grand écran, portable, tablette, mobile), en mode jour ou nuit. Le mode « Sélectionner » ouvre directement dans le formulaire l'élément cliqué dans l'aperçu.
-- Annuler / rétablir (Ctrl+Z, Ctrl+Y) et enregistrement (Ctrl+S). Chaque enregistrement crée une nouvelle version de la base.
+### Reference CV (editor)
 
-### Mise en forme du texte
+- **Structure**: header, then three zones (top of page, main column, side column). Blocks move by drag and drop, including from one zone to another. They can be added, duplicated and deleted.
+- **Block types**: timeline section (education, experience), free box, link card, certification box, banner.
+- **Content**: forms generated for each block. Entry lists are reordered by drag and drop. Icon picker and image chooser are built in.
+- **Detail windows**: each box can open a detail window, freely composed (projects, logo tiles, information panels, cards with a timeline or sub-cards, score, image, notes…).
+- **Animations**: card entrance, section reveal (fade, zoom, slide or none), durations, 3D tilt following the mouse, hover effects, opening of detail windows. Each block can choose its own reveal animation.
+- **Preview**: rendered at the width of a real screen (desktop, laptop, tablet, mobile), in light or dark mode. “Select” mode opens the element clicked in the preview directly in the form.
+- Undo / redo (Ctrl+Z, Ctrl+Y) and save (Ctrl+S). Each save creates a new version of the base.
 
-Dans les champs de texte long :
+### Text formatting
 
-- `**texte**` affiche le texte en gras ;
-- un retour à la ligne est conservé dans le CV.
+In long text fields:
 
-### Paramètres
+- `**text**` shows the text in bold;
+- a line break is kept in the CV.
 
-- **Mises à jour automatiques** (activées par défaut) : au lancement, l'application vérifie les releases GitHub, télécharge la nouvelle version en arrière-plan et l'installe à la fermeture. Un bouton permet aussi de redémarrer immédiatement pour l'installer.
-- **Synchronisation entre postes** : le CV de référence et les CV générés se retrouvent automatiquement sur chacun de ses ordinateurs. Trois choix :
-  - _Désactivée_ (par défaut) : les données restent sur le poste ;
-  - _Dossier synchronisé_ : les données sont enregistrées dans un dossier choisi (OneDrive, Dropbox, Google Drive…), que ce service synchronise. Un dossier qui contient déjà des données (créées sur un autre poste) est utilisé tel quel ; sinon les données du poste y sont copiées. Une modification faite ailleurs est rechargée aussitôt ;
-  - _GitHub, chiffré_ : les données sont chiffrées par un mot de passe (AES-256-GCM, clé dérivée par scrypt) puis envoyées dans un Gist secret du compte GitHub de l'utilisateur. GitHub ne reçoit que des données illisibles, y compris les noms de fichiers ; le mot de passe n'est jamais transmis et sa clé est gardée chiffrée par Windows. Envoi trois secondes après chaque enregistrement, récupération au lancement, au retour sur la fenêtre et toutes les dix minutes. Le même mot de passe est demandé sur chaque poste (un mot de passe différent est refusé). Un CV modifié sur deux postes entre deux synchronisations est conservé en deux exemplaires ; pour le CV de référence, l'application demande quelle version garder et enregistre l'autre dans le dossier de l'application.
+### Settings
 
-  Les paramètres (fenêtre, thème, jeton) restent propres à chaque poste. Le jeton utilisé est celui de « Publication sur GitHub » ou de GitHub CLI ; un jeton à accès précis doit avoir la permission de compte « Gists » en lecture et écriture.
+- **Automatic updates** (on by default): at launch, the app checks GitHub releases, downloads the new version in the background and installs it on exit. A button also lets you restart right away to install it.
+- **Sync between computers**: the reference CV and generated CVs show up automatically on each of your computers. Three choices:
+  - _Off_ (default): data stays on the computer;
+  - _Synced folder_: data is saved in a chosen folder (OneDrive, Dropbox, Google Drive…) that this service syncs. A folder that already holds data (created on another computer) is used as is; otherwise the computer’s data is copied into it. A change made elsewhere is reloaded at once;
+  - _GitHub, encrypted_: data is encrypted with a password (AES-256-GCM, key derived with scrypt) then sent to a secret Gist in the user’s GitHub account. GitHub only receives unreadable data, file names included; the password is never sent and its key is kept encrypted by Windows. Upload three seconds after each save, download at launch, when returning to the window and every ten minutes. The same password is asked on each computer (a different password is refused). A CV changed on two computers between two syncs is kept twice; for the reference CV, the app asks which version to keep and saves the other one in the app folder.
 
-- **Raccourcis** : création d'un raccourci « CV Studio » sur le Bureau et dans le menu Démarrer. Pour chaque emplacement, l'application indique ce qu'elle trouve et agit en conséquence :
-  - aucun raccourci : bouton « Créer le raccourci » ;
-  - raccourci valide (y compris sous un autre nom, ou dans un sous-dossier du menu Démarrer) : il est signalé et rien n'est recréé ; il peut être affiché dans l'Explorateur ou mis à la corbeille ;
-  - raccourci cassé ou vers une ancienne copie de l'application : bouton « Réparer », qui le fait pointer vers l'installation actuelle ;
-  - fichier « CV Studio.lnk » qui ouvre un autre programme : remplacement uniquement après confirmation.
+  Settings (window, theme, token) stay specific to each computer. The token used is the “Publish to GitHub” one or GitHub CLI’s; a fine-grained token needs the “Gists” account permission with read and write access.
 
-  Les raccourcis portent le nom de ceux de l'installeur : la désinstallation les retire aussi. L'état est relu à chaque retour dans l'application (raccourci supprimé depuis l'Explorateur, par exemple).
+- **Shortcuts**: creates a “CV Studio” shortcut on the Desktop and in the Start menu. For each location, the app shows what it finds and acts accordingly:
+  - no shortcut: “Créer le raccourci” (create) button;
+  - valid shortcut (including under another name, or in a Start menu subfolder): it is reported and nothing is recreated; it can be shown in Explorer or moved to the Recycle Bin;
+  - broken shortcut, or one pointing to an old copy of the app: “Réparer” (repair) button, which points it to the current install;
+  - a “CV Studio.lnk” file that opens another program: replaced only after confirmation.
 
-- **Fenêtre au lancement** : grande fenêtre (agrandie, par défaut) ou taille et position personnalisées. Le réglage personnalisé se fait dans un cadre qui représente les écrans à l'échelle : le rectangle de la fenêtre s'y déplace et s'y redimensionne à la souris (ou au clavier : flèches, Maj pour un pas plus grand, Alt pour redimensionner). Quatre champs (largeur, hauteur, position X, position Y) permettent un réglage précis. Si l'emplacement enregistré n'est plus visible (écran débranché), la fenêtre s'ouvre agrandie.
-- **Publication sur GitHub** : dépôt cible (par défaut, celui de l'application) et connexion. L'application utilise le jeton personnel enregistré (chiffré par Windows, jamais transmis à l'interface), sinon celui de GitHub CLI (`gh auth login`). Un jeton à accès précis limité au dépôt, avec la permission « Contents » en lecture et écriture, suffit.
-- **Apparence** : thème de l'application (selon Windows, clair ou sombre).
-- **Données** : ouverture du dossier de données, export et import de la base en JSON, restauration de la base d'origine.
+  Shortcuts use the installer’s names, so uninstalling removes them too. Their state is read again each time you come back to the app (shortcut deleted from Explorer, for example).
+
+- **Window at launch**: large window (maximized, default) or custom size and position. The custom setting is made in a frame that shows the screens to scale: the window rectangle moves and resizes there with the mouse (or the keyboard: arrows, Shift for a bigger step, Alt to resize). Four fields (width, height, X, Y) allow precise values. If the saved position is no longer visible (screen unplugged), the window opens maximized.
+- **Publish to GitHub**: target repository (the app’s own by default) and sign-in. The app uses the saved personal token (encrypted by Windows, never sent to the interface), otherwise GitHub CLI’s (`gh auth login`). A fine-grained token limited to the repository, with the “Contents” permission in read and write, is enough.
+- **Appearance**: app theme (follow Windows, light or dark).
+- **Data**: open the data folder, export and import the base as JSON, restore the original base.
 
 ## Installation
 
-1. Télécharger `CV-Studio-Setup-<version>.exe` depuis la page [Releases](https://github.com/WolfGang-PRoxa/cv/releases/latest).
-2. Lancer l'installeur. L'application n'étant pas signée, Windows SmartScreen affiche un avertissement : choisir « Informations complémentaires » puis « Exécuter quand même ».
+1. Download `CV-Studio-Setup-<version>.exe` from the [Releases](https://github.com/WolfGang-PRoxa/cv/releases/latest) page.
+2. Run the installer. Since the app is not signed, Windows SmartScreen shows a warning: choose “More info” then “Run anyway”.
 
-L'installation se fait pour l'utilisateur courant, sans droits administrateur. Les mises à jour suivantes s'installent automatiquement.
+The app is installed for the current user, without administrator rights.
 
-## Données
+## Updating
 
-Les données sont enregistrées dans `%APPDATA%\CV Studio` (la base et les CV peuvent être placés dans un dossier synchronisé, voir « Synchronisation entre postes ») :
+At launch, the app checks GitHub releases, downloads the new version in the background and installs it on exit (or right away with “Redémarrer et installer”, restart and install). This can be turned off in the settings; you then just download and run the new installer from the [Releases](https://github.com/WolfGang-PRoxa/cv/releases/latest) page. What changed in each version is described in the [CHANGELOG](CHANGELOG.md).
 
-| Fichier           | Contenu                                                                                     |
-| ----------------- | ------------------------------------------------------------------------------------------- |
-| `base.json`       | CV de référence (avec son numéro de version)                                                |
-| `cvs/<id>.json`   | CV générés : nom, notes, éléments masqués et instantané de la base au moment de la création |
-| `settings.json`   | Paramètres de l'application (propres au poste)                                              |
-| `sync-state.json` | État de la dernière synchronisation GitHub (empreintes des éléments)                        |
+## Data
 
-Au premier lancement, la base est initialisée avec un CV d'exemple fictif (Camille Martin) livré dans l'application. Pour partir de son propre CV, utiliser « Importer une base (JSON) » dans les paramètres. Aucune donnée personnelle n'est livrée dans l'application ni dans ce dépôt public. La désinstallation conserve ce dossier.
+Data is saved in `%APPDATA%\CV Studio` (the base and CVs can be placed in a synced folder, see “Sync between computers”):
 
-Un CV généré conserve une copie de la base au moment de sa création : modifier la base ne change pas un CV déjà envoyé. La mise à jour depuis la base se fait sur demande, CV par CV.
+| File              | Content                                                                |
+| ----------------- | ---------------------------------------------------------------------- |
+| `base.json`       | Reference CV (with its version number)                                 |
+| `cvs/<id>.json`   | Generated CVs: name, notes, hidden elements and a snapshot of the base |
+| `settings.json`   | App settings (specific to the computer)                                |
+| `sync-state.json` | State of the last GitHub sync (fingerprints of the elements)           |
 
-## Développement
+On first launch, the base is initialized with a fictional sample CV (Camille Martin) shipped with the app. To start from your own CV, use “Importer une base (JSON)” (import a base) in the settings. No personal data ships in the app or in this public repository. Uninstalling keeps this folder.
 
-Prérequis : Node.js 22 ou plus récent.
+A generated CV keeps a copy of the base as it was when it was created: changing the base does not change a CV already sent. Updating from the base is done on request, CV by CV.
+
+## Development
+
+Requirements: Node.js 22 or later.
 
 ```bash
-npm install        # dépendances (Electron est téléchargé au premier lancement)
-npm start          # lance l'application en mode développement
-npm run check      # vérifications : syntaxe, identifiants, rendu, masquage
-npm run dist       # construit l'installeur dans dist/ sans le publier
+npm ci             # dependencies, without changing package-lock.json
+npm start          # runs the app in development mode
+npm run format     # formats all the code with Prettier
+npm run lint       # analyzes the code with ESLint
+npm run check      # Prettier (check), ESLint, then scripts/check.mjs: syntax, ids, rendering, hiding
+npm test           # unit tests (node --test, test/ folder)
+npm run dist       # builds the installer in dist/ without publishing it
 ```
 
-### Publication d'une version
+GitHub CI (`.github/workflows/ci.yml`) runs `npm run check` and `npm test` on every push and on every pull request.
 
-1. Augmenter `version` dans `package.json` (les mises à jour automatiques comparent ce numéro), committer et envoyer sur `main`.
-2. Publier :
+### Publishing a version
+
+1. Bump `version` in `package.json` (`X.Y.Z` format, the only source of the number: automatic updates compare it), move the `[Unreleased]` entries to the new version in `CHANGELOG.md` and `CHANGELOG.fr.md`, commit and push to `main`.
+2. Publish:
 
    ```bash
    git pull
-   npm ci             # installe les dépendances sans modifier package-lock.json
+   npm ci             # installs dependencies without changing package-lock.json
    npm run release
    ```
 
-   Prérequis : GitHub CLI connectée (`gh auth login`).
+   Requirement: GitHub CLI signed in (`gh auth login`).
 
-Le script (`scripts/release.mjs`) :
+The script (`scripts/release.mjs`):
 
-- refuse de publier si la branche n'est pas `main`, s'il reste des modifications locales, si `main` n'est pas à jour avec GitHub, ou si la version est déjà publiée ;
-- construit l'installeur avec electron-builder, sans le publier ;
-- crée la release `v<version>` avec la GitHub CLI : elle reste en brouillon le temps d'envoyer l'installeur, sa carte de blocs (`.blockmap`, pour les mises à jour différentielles) et `latest.yml`, que les applications installées consultent, puis elle est publiée et marquée « Latest » ;
-- relit la release sur GitHub et vérifie la présence et la taille des trois fichiers.
+- refuses to publish if the branch is not `main`, if there are local changes, if `main` is not up to date with GitHub, or if the version is already published;
+- builds the installer with electron-builder, without publishing it;
+- creates the `v<version>` release with GitHub CLI: it stays a draft while the installer, its block map (`.blockmap`, for differential updates) and `latest.yml`, which installed apps read, are uploaded, then it is published and marked “Latest”;
+- reads the release back from GitHub and checks that the three files are there with the right size.
 
-Si une release existe déjà mais qu'il lui manque des fichiers, relancer `npm run release` la répare : les trois fichiers sont reconstruits et renvoyés ensemble (`latest.yml` contient l'empreinte de l'installeur, ils doivent venir de la même construction).
+If a release already exists but is missing files, running `npm run release` again repairs it: the three files are rebuilt and uploaded together (`latest.yml` holds the installer’s hash, so they must come from the same build).
 
-### Releases des CV et mises à jour de l'application
+### CV releases and app updates
 
-Les CV sont publiés dans le même dépôt que l'application. Les mises à jour automatiques lisent la release marquée « Latest » sur GitHub ; pour qu'une release de CV ne la remplace jamais :
+CVs are published in the same repository as the app. Automatic updates read the release marked “Latest” on GitHub; so that a CV release never replaces it:
 
-- les tags des CV commencent par `cv-` (jamais `v<version>`) ;
-- chaque release de CV est créée avec `make_latest: false`. Elle est d'abord créée en brouillon, les fichiers y sont joints, puis elle est publiée ; en cas d'échec, le brouillon est supprimé.
+- CV tags start with `cv-` (never `v<version>`);
+- each CV release is created with `make_latest: false`. It is first created as a draft, the files are attached, then it is published; if something fails, the draft is deleted.
 
-Une nouvelle version de l'application publiée avec `npm run release` redevient « Latest » comme d'habitude. La description de chaque release de CV contient un repère invisible (`<!-- cv-studio {"cvId":…} -->`) qui la relie au CV de l'application.
+A new app version published with `npm run release` becomes “Latest” again as usual. Each CV release description holds an invisible marker (`<!-- cv-studio {"cvId":…} -->`) that links it to the CV in the app.
 
-### Structure du projet
+### Project structure
 
 ```
 src/
-  main/                 Processus principal Electron
-    main.js             Fenêtre, communication avec l'interface
-    storage.js          Lecture et écriture des données
-    exporter.js         Exports PDF, HTML, JSON
-    updater.js          Mises à jour automatiques (electron-updater)
-    github.js           Publication des CV en releases GitHub
-    sync.js             Synchronisation entre postes (dossier ou Gist chiffré)
-    sync-crypto.js      Chiffrement des données synchronisées (vérifié par check.mjs)
-    window-bounds.js    Taille et position de la fenêtre au lancement
-    shortcuts.js        Raccourcis Bureau et menu Démarrer
-    shortcut-rules.js   Détection d'un raccourci existant (vérifiée par check.mjs)
-    preload.cjs         Pont sécurisé vers l'interface
-  renderer/             Interface de l'application
-    app.js              Navigation entre les vues
-    views/              Mes CV, génération, éditeur, paramètres
-    components/         Aperçu, formulaires, cadre de position de la fenêtre
-    lib/                Utilitaires d'interface, état partagé
-  shared/github-tags.js Règles des tags de releases de CV
-  shared/sync-merge.js  Fusion à trois versions de la synchronisation (vérifiée par check.mjs)
-  shared/cv/            Moteur de CV, commun à l'interface et aux exports
-    schema.js           Types de blocs et de composants, champs éditables
-    render.js           Génération du HTML d'un CV
-    icons.js            Bibliothèque d'icônes et de logos
-    sample-cv.json      CV d'exemple fictif livré avec l'application
-    template/           Feuille de style et script intégrés à chaque CV
-scripts/check.mjs       Vérifications automatiques
-build/                  Icône de l'application
+  main/                 Electron main process
+    main.js             Window, communication with the interface
+    storage.js          Reading and writing data
+    exporter.js         PDF, HTML, JSON exports
+    updater.js          Automatic updates (electron-updater)
+    github.js           Publishing CVs as GitHub releases
+    sync.js             Sync between computers (folder or encrypted Gist)
+    sync-crypto.js      Encryption of synced data (checked by check.mjs)
+    window-bounds.js    Window size and position at launch
+    shortcuts.js        Desktop and Start menu shortcuts
+    shortcut-rules.js   Detection of an existing shortcut (checked by check.mjs and tests)
+    preload.cjs         Secure bridge to the interface
+  renderer/             App interface
+    app.js              Navigation between views
+    views/              My CVs, generation, editor, settings
+    components/         Preview, forms, window position frame
+    lib/                Interface utilities, shared state
+  shared/github-tags.js Rules for CV release tags
+  shared/sync-merge.js  Three-way merge for sync (checked by check.mjs and tests)
+  shared/cv/            CV engine, shared by the interface and the exports
+    schema.js           Block and component types, editable fields
+    render.js           HTML generation for a CV
+    icons.js            Icon and logo library
+    sample-cv.json      Fictional sample CV shipped with the app
+    template/           Stylesheet and script embedded in each CV
+scripts/check.mjs       Automatic checks
+scripts/release.mjs     Publishing a version
+test/                   Unit tests (node --test)
+build/                  App icon
+.github/workflows/      CI: checks and tests on every push
 ```
 
-### Fonctionnement du moteur de CV
+### How the CV engine works
 
-Le CV est décrit par des données (voir `sample-cv.json`) : un en-tête, puis des blocs répartis dans trois zones. Chaque élément masquable porte un identifiant unique. `render.js` produit une page HTML autonome, en retirant les éléments masqués. Le schéma (`schema.js`) décrit chaque type de bloc et de composant ; l'éditeur en déduit automatiquement ses formulaires, et le générateur son arbre d'éléments. Ajouter un type de bloc consiste donc à le déclarer dans le schéma et à écrire son rendu.
+A CV is described by data (see `sample-cv.json`): a header, then blocks spread over three zones. Each element that can be hidden has a unique id. `render.js` produces a standalone HTML page, leaving out hidden elements. The schema (`schema.js`) describes each block and component type; the editor derives its forms from it automatically, and the generator its element tree. Adding a block type therefore means declaring it in the schema and writing its rendering.
 
-## Crédits
+## License
 
-Les logos d'IntelliJ IDEA et de GIMP proviennent de [Simple Icons](https://simpleicons.org) (licence CC0). Les autres logos de logiciels sont des dessins simplifiés. Les marques citées appartiennent à leurs détenteurs respectifs.
+CV Studio is released under the [MIT](LICENSE) license.
+
+## Credits
+
+The IntelliJ IDEA and GIMP logos come from [Simple Icons](https://simpleicons.org) (CC0 license). Other software logos are simplified drawings. Trademarks belong to their respective owners.
