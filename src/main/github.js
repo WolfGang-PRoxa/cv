@@ -240,7 +240,7 @@ export async function listReleases() {
       'GET',
       `/repos/${repo.owner}/${repo.repo}/releases?per_page=100&page=${page}`,
     ).catch((error) => {
-      throw new Error(networkMessage(error));
+      throw new Error(networkMessage(error), { cause: error });
     });
     releases.push(...items.filter((item) => item.tag_name.startsWith(CV_TAG_PREFIX) && !item.draft).map(toRelease));
     if (items.length < 100) break;
@@ -271,7 +271,7 @@ export async function publishRelease(payload, { makePdf, onProgress = () => {} }
     await request(token, 'GET', `${base}/releases/tags/${encodeURIComponent(payload.tag)}`);
     throw Object.assign(new Error('une release porte déjà ce tag : en choisir un autre.'), { status: 409 });
   } catch (error) {
-    if (error.status !== 404) throw new Error(networkMessage(error));
+    if (error.status !== 404) throw new Error(networkMessage(error), { cause: error });
   }
 
   // Fichiers préparés avant toute création sur GitHub.
@@ -299,7 +299,7 @@ export async function publishRelease(payload, { makePdf, onProgress = () => {} }
       },
     });
   } catch (error) {
-    throw new Error(networkMessage(error));
+    throw new Error(networkMessage(error), { cause: error });
   }
 
   try {
@@ -319,7 +319,7 @@ export async function publishRelease(payload, { makePdf, onProgress = () => {} }
     return toRelease(published);
   } catch (error) {
     await request(token, 'DELETE', `${base}/releases/${release.id}`).catch(() => {});
-    throw new Error(networkMessage(error));
+    throw new Error(networkMessage(error), { cause: error });
   }
 }
 
@@ -337,7 +337,7 @@ export async function deleteRelease({ id, tag }) {
       if (error.status !== 404 && error.status !== 422) throw error;
     });
   } catch (error) {
-    throw new Error(networkMessage(error));
+    throw new Error(networkMessage(error), { cause: error });
   }
   return true;
 }

@@ -99,7 +99,7 @@ async function exists(file) {
 
 /** Fichiers .lnk du dossier (et de ses sous-dossiers jusqu'à `depth`), sauf « CV Studio.lnk » à la racine. */
 async function listLinks(dir, depth, prefix = '') {
-  let entries = [];
+  let entries;
   try {
     entries = await fs.readdir(path.join(dir, prefix), { withFileTypes: true });
   } catch {

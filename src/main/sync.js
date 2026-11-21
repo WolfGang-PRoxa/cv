@@ -210,7 +210,7 @@ export async function enableGist(passphrase) {
     login = (await request(token, 'GET', '/user'))?.login || null;
     gist = await findGist(token);
   } catch (error) {
-    throw new Error(gistError(error));
+    throw new Error(gistError(error), { cause: error });
   }
   let salt;
   let key;
@@ -236,7 +236,7 @@ export async function enableGist(passphrase) {
         },
       });
     } catch (error) {
-      throw new Error(gistError(error));
+      throw new Error(gistError(error), { cause: error });
     }
   }
   // Retour éventuel du mode dossier : les données redeviennent celles du dossier de l'application.

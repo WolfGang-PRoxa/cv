@@ -63,11 +63,6 @@ function revealAttr(block, cv) {
   return value && value !== 'fade-up' ? ` data-reveal="${escapeAttr(value)}"` : '';
 }
 
-function textItems(items, tag = 'span', className = '') {
-  const cls = className ? ` class="${className}"` : '';
-  return (items || []).map((item) => `<${tag}${cls}>${rich(item.text)}</${tag}>`).join('');
-}
-
 /* ------------------------------------------------------------------ */
 /* En-tête                                                            */
 /* ------------------------------------------------------------------ */
@@ -322,7 +317,7 @@ function interactiveAttrs(block, labelText) {
   return ` role="button" tabindex="0" aria-haspopup="dialog" aria-controls="detail-modal" aria-expanded="false" aria-label="Ouvrir le détail : ${escapeAttr(title)}" data-detail="${escapeAttr(block.id)}"`;
 }
 
-function renderBlock(block, cv, ctx, zone) {
+function renderBlock(block, cv, ctx) {
   const mark = ctx.mark(block.id);
   const reveal = revealAttr(block, cv);
   const interactive = hasDetail(block);
@@ -382,7 +377,7 @@ function renderBlock(block, cv, ctx, zone) {
 }
 
 function renderZone(cv, zone, ctx) {
-  return (cv.zones[zone] || []).map((block) => renderBlock(block, cv, ctx, zone)).filter(Boolean);
+  return (cv.zones[zone] || []).map((block) => renderBlock(block, cv, ctx)).filter(Boolean);
 }
 
 function renderTopZone(cv, ctx) {
@@ -395,7 +390,7 @@ function renderTopZone(cv, ctx) {
     group = [];
   };
   for (const block of cv.zones.top || []) {
-    const html = renderBlock(block, cv, ctx, 'top');
+    const html = renderBlock(block, cv, ctx);
     if (!html) continue;
     if (block.type === 'banner') {
       flush();

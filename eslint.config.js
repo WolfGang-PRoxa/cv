@@ -10,6 +10,12 @@ export default [
       sourceType: 'module',
       globals: { ...globals.node },
     },
+    rules: {
+      // Les noms de fichiers sont nettoyés de leurs caractères de contrôle, volontairement.
+      'no-control-regex': 'off',
+      // Une déstructuration sert à retirer des champs (jeton, clé) avant d'envoyer le reste.
+      'no-unused-vars': ['error', { ignoreRestSiblings: true }],
+    },
   },
   {
     // Interface Electron et moteur de CV, utilisé aussi dans l'interface.

@@ -7,7 +7,7 @@
   try {
     const savedTheme = localStorage.getItem('cv-theme');
     if (savedTheme === 'dark' || savedTheme === 'light') root.dataset.theme = savedTheme;
-  } catch (error) {
+  } catch {
     // Le thème reste utilisable même si le stockage local est bloqué.
   }
 
@@ -62,7 +62,7 @@
         button.classList.add('is-copied');
         feedback.textContent = 'Copié !';
         button.setAttribute('aria-label', 'Information copiée dans le presse-papiers');
-      } catch (error) {
+      } catch {
         button.classList.remove('is-copied');
         button.classList.add('copy-error');
         feedback.textContent = 'Copie impossible';
@@ -93,7 +93,9 @@
       if (save) {
         try {
           localStorage.setItem('cv-theme', isDark ? 'dark' : 'light');
-        } catch (error) {}
+        } catch {
+          // Le choix ne sera simplement pas retenu à la prochaine visite.
+        }
       }
     };
     setTheme(root.dataset.theme === 'dark' ? 'dark' : 'light', false);

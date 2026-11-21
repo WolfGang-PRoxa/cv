@@ -28,7 +28,7 @@ export function planSync({ local = {}, remote = {}, synced = {}, pristine = [] }
     const l = local[key];
     const r = remote[key];
     const s = synced[key];
-    let action = null;
+    let action;
     if (l === r) action = null;
     else if (untouched.has(key) && r !== undefined) action = 'pull';
     else if (l === s) action = r === undefined ? 'delete-local' : 'pull';
