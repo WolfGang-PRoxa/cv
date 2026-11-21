@@ -14,7 +14,10 @@
   },
   "scripts": {
     "start": "electron .",
-    "check": "node scripts/check.mjs",
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "check": "prettier --check . && eslint . && node scripts/check.mjs",
+    "test": "node --test",
     "dist": "electron-builder --win --publish never",
     "release": "node scripts/release.mjs"
   },
@@ -22,8 +25,12 @@
     "electron-updater": "^6.8.11"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "electron": "^45.2.3",
-    "electron-builder": "^26.18.0"
+    "electron-builder": "^26.18.0",
+    "eslint": "^10.15.0",
+    "globals": "^17.14.0",
+    "prettier": "^3.10.1"
   },
   "allowScripts": {
     "electron-winstaller": false
