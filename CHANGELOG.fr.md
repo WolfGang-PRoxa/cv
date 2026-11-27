@@ -16,11 +16,14 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), et le p
 - Prettier et ESLint, lancés par `npm run check` avant les vérifications existantes ; scripts `npm run format` et `npm run lint`.
 - Tests unitaires (`npm test`, `node --test`) pour la détection des raccourcis, les tags des releases de CV et la fusion de la synchronisation.
 - CI GitHub qui lance `npm run check` et `npm test` à chaque push et sur chaque pull request.
+- Les releases sont construites et publiées par GitHub Actions à l'envoi d'un tag `vX.Y.Z` (`.github/workflows/release.yml`), avec des notes de version tirées des deux journaux des modifications (`scripts/changelog-notes.mjs`).
 
 ### Améliorations
 
 - Tout le code est mis en forme avec Prettier.
 - Les erreurs réseau renvoyées par la publication GitHub et la synchronisation conservent l'erreur d'origine comme cause.
+- `npm run release` ne construit plus l'installeur et n'a plus besoin de GitHub CLI : il vérifie la version, les deux journaux des modifications et le tag, lance les vérifications et les tests, puis crée et envoie le tag `vX.Y.Z`.
+- Prettier accepte les fins de ligne Windows (`endOfLine: auto`) : `npm run check` passe sur une copie du dépôt sous Windows.
 
 ### Suppressions
 

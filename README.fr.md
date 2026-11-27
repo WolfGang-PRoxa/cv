@@ -104,29 +104,48 @@ npm test           # tests unitaires (node --test, dossier test/)
 npm run dist       # construit l'installeur dans dist/ sans le publier
 ```
 
-La CI GitHub (`.github/workflows/ci.yml`) lance `npm run check` et `npm test` à chaque push et sur chaque pull request.
+La CI GitHub (`.github/workflows/ci.yml`) lance `npm run check` et `npm test` à chaque push et sur chaque pull request. Les releases ont leur propre workflow (voir plus bas).
 
 ### Publication d'une version
 
-1. Augmenter `version` dans `package.json` (format `X.Y.Z`, seule source du numéro : les mises à jour automatiques le comparent), déplacer les entrées de `[Unreleased]` vers la nouvelle version dans `CHANGELOG.md` et `CHANGELOG.fr.md`, committer et envoyer sur `main`.
-2. Publier :
+Les releases sont construites et publiées par GitHub Actions (`.github/workflows/release.yml`) à l'envoi d'un tag `vX.Y.Z`. Rien n'est construit sur le PC, et la publication d'une version ne demande ni jeton GitHub ni GitHub CLI.
+
+1. Augmenter `version` dans `package.json` (format `X.Y.Z`, seule source du numéro : les mises à jour automatiques le comparent).
+2. Déplacer les entrées de `[Unreleased]` vers une nouvelle section `## [X.Y.Z] - AAAA-MM-JJ` dans `CHANGELOG.md` et `CHANGELOG.fr.md`.
+3. Committer et envoyer sur `main`.
+4. Lancer le script de publication :
 
    ```bash
-   git pull
-   npm ci             # installe les dépendances sans modifier package-lock.json
+   npm ci             # seulement si les dépendances ont changé depuis la dernière installation
    npm run release
    ```
 
-   Prérequis : GitHub CLI connectée (`gh auth login`).
+5. Suivre le workflow « Release » dans l'[onglet Actions](https://github.com/WolfGang-PRoxa/cv/actions/workflows/release.yml) du dépôt.
 
-Le script (`scripts/release.mjs`) :
+`npm run release` (`scripts/release.mjs`) ne construit rien : il vérifie que la branche est `main`, qu'il ne reste aucune modification locale et que `main` n'a ni retard ni avance sur GitHub, que la version est au format `X.Y.Z`, que les deux journaux des modifications ont une entrée pour elle, et que le tag `vX.Y.Z` n'existe ni en local ni sur GitHub. Il lance ensuite `npm run check` et `npm test`, crée le tag annoté `vX.Y.Z`, l'envoie et affiche le lien vers le workflow.
 
-- refuse de publier si la branche n'est pas `main`, s'il reste des modifications locales, si `main` n'est pas à jour avec GitHub, ou si la version est déjà publiée ;
+Le workflow, ensuite :
+
+- vérifie que le tag correspond à `package.json` et pointe sur un commit de `main`, puis lance `npm ci`, `npm run check` et `npm test` sous Windows ;
+- tire les notes de version des deux journaux des modifications (`scripts/changelog-notes.mjs` : anglais, puis français) ;
 - construit l'installeur avec electron-builder, sans le publier ;
-- crée la release `v<version>` avec la GitHub CLI : elle reste en brouillon le temps d'envoyer l'installeur, sa carte de blocs (`.blockmap`, pour les mises à jour différentielles) et `latest.yml`, que les applications installées consultent, puis elle est publiée et marquée « Latest » ;
-- relit la release sur GitHub et vérifie la présence et la taille des trois fichiers.
+- dans un job séparé, le seul autorisé à écrire dans le dépôt, crée la release `vX.Y.Z` en brouillon avec l'installeur, sa carte de blocs (`.blockmap`, pour les mises à jour différentielles) et `latest.yml`, que les applications installées consultent, puis la publie et la marque « Latest » ;
+- vérifie que les trois fichiers sont présents dans la release et non vides.
 
-Si une release existe déjà mais qu'il lui manque des fichiers, relancer `npm run release` la répare : les trois fichiers sont reconstruits et renvoyés ensemble (`latest.yml` contient l'empreinte de l'installeur, ils doivent venir de la même construction).
+`npm run dist` construit toujours un installeur dans `dist/` pour le tester sur le PC.
+
+En cas d'échec du workflow :
+
+1. Corriger le problème, committer et envoyer sur `main`.
+2. Supprimer le tag sur GitHub et en local :
+
+   ```bash
+   git push --delete origin vX.Y.Z
+   git tag -d vX.Y.Z
+   ```
+
+3. Si une release `vX.Y.Z` en brouillon a été créée, la supprimer depuis la page Releases du dépôt.
+4. Relancer `npm run release`.
 
 ### Releases des CV et mises à jour de l'application
 
@@ -135,7 +154,7 @@ Les CV sont publiés dans le même dépôt que l'application. Les mises à jour 
 - les tags des CV commencent par `cv-` (jamais `v<version>`) ;
 - chaque release de CV est créée avec `make_latest: false`. Elle est d'abord créée en brouillon, les fichiers y sont joints, puis elle est publiée ; en cas d'échec, le brouillon est supprimé.
 
-Une nouvelle version de l'application publiée avec `npm run release` redevient « Latest » comme d'habitude. La description de chaque release de CV contient un repère invisible (`<!-- cv-studio {"cvId":…} -->`) qui la relie au CV de l'application.
+Une nouvelle version de l'application publiée par le workflow de release redevient « Latest » comme d'habitude. La description de chaque release de CV contient un repère invisible (`<!-- cv-studio {"cvId":…} -->`) qui la relie au CV de l'application.
 
 ### Structure du projet
 
@@ -167,10 +186,11 @@ src/
     sample-cv.json      CV d'exemple fictif livré avec l'application
     template/           Feuille de style et script intégrés à chaque CV
 scripts/check.mjs       Vérifications automatiques
-scripts/release.mjs     Publication d'une version
+scripts/release.mjs     Publication d'une version : vérifications, puis envoi du tag vX.Y.Z
+scripts/changelog-notes.mjs  Notes de version tirées des deux journaux des modifications
 test/                   Tests unitaires (node --test)
 build/                  Icône de l'application
-.github/workflows/      CI : vérifications et tests à chaque push
+.github/workflows/      CI (vérifications et tests à chaque push) et release (tags vX.Y.Z)
 ```
 
 ### Fonctionnement du moteur de CV

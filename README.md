@@ -104,29 +104,48 @@ npm test           # unit tests (node --test, test/ folder)
 npm run dist       # builds the installer in dist/ without publishing it
 ```
 
-GitHub CI (`.github/workflows/ci.yml`) runs `npm run check` and `npm test` on every push and on every pull request.
+GitHub CI (`.github/workflows/ci.yml`) runs `npm run check` and `npm test` on every push and on every pull request. Releases have their own workflow (see below).
 
 ### Publishing a version
 
-1. Bump `version` in `package.json` (`X.Y.Z` format, the only source of the number: automatic updates compare it), move the `[Unreleased]` entries to the new version in `CHANGELOG.md` and `CHANGELOG.fr.md`, commit and push to `main`.
-2. Publish:
+Releases are built and published by GitHub Actions (`.github/workflows/release.yml`) when a `vX.Y.Z` tag is pushed. Nothing is built on the PC, and publishing a version needs neither a GitHub token nor GitHub CLI.
+
+1. Bump `version` in `package.json` (`X.Y.Z` format, the only source of the number: automatic updates compare it).
+2. Move the `[Unreleased]` entries to a new `## [X.Y.Z] - YYYY-MM-DD` section in `CHANGELOG.md` and `CHANGELOG.fr.md`.
+3. Commit and push to `main`.
+4. Run the release script:
 
    ```bash
-   git pull
-   npm ci             # installs dependencies without changing package-lock.json
+   npm ci             # only if dependencies changed since the last install
    npm run release
    ```
 
-   Requirement: GitHub CLI signed in (`gh auth login`).
+5. Follow the “Release” workflow in the repository’s [Actions tab](https://github.com/WolfGang-PRoxa/cv/actions/workflows/release.yml).
 
-The script (`scripts/release.mjs`):
+`npm run release` (`scripts/release.mjs`) builds nothing: it checks that the branch is `main`, that there are no local changes and that `main` is neither behind nor ahead of GitHub, that the version is in `X.Y.Z` format, that both changelogs have an entry for it, and that the `vX.Y.Z` tag exists neither locally nor on GitHub. It then runs `npm run check` and `npm test`, creates the annotated `vX.Y.Z` tag, pushes it and prints the link to the workflow.
 
-- refuses to publish if the branch is not `main`, if there are local changes, if `main` is not up to date with GitHub, or if the version is already published;
+The workflow then:
+
+- checks that the tag matches `package.json` and points to a commit of `main`, then runs `npm ci`, `npm run check` and `npm test` on Windows;
+- takes the release notes from both changelogs (`scripts/changelog-notes.mjs`: English, then French);
 - builds the installer with electron-builder, without publishing it;
-- creates the `v<version>` release with GitHub CLI: it stays a draft while the installer, its block map (`.blockmap`, for differential updates) and `latest.yml`, which installed apps read, are uploaded, then it is published and marked “Latest”;
-- reads the release back from GitHub and checks that the three files are there with the right size.
+- in a separate job, the only one allowed to write to the repository, creates the `vX.Y.Z` release as a draft with the installer, its block map (`.blockmap`, for differential updates) and `latest.yml`, which installed apps read, then publishes it and marks it “Latest”;
+- checks that the three files are on the release and not empty.
 
-If a release already exists but is missing files, running `npm run release` again repairs it: the three files are rebuilt and uploaded together (`latest.yml` holds the installer’s hash, so they must come from the same build).
+`npm run dist` still builds an installer in `dist/` to test it on the PC.
+
+If the workflow fails:
+
+1. Fix the problem, commit and push to `main`.
+2. Delete the tag on GitHub and locally:
+
+   ```bash
+   git push --delete origin vX.Y.Z
+   git tag -d vX.Y.Z
+   ```
+
+3. If a draft release `vX.Y.Z` was created, delete it on the repository’s Releases page.
+4. Run `npm run release` again.
 
 ### CV releases and app updates
 
@@ -135,7 +154,7 @@ CVs are published in the same repository as the app. Automatic updates read the 
 - CV tags start with `cv-` (never `v<version>`);
 - each CV release is created with `make_latest: false`. It is first created as a draft, the files are attached, then it is published; if something fails, the draft is deleted.
 
-A new app version published with `npm run release` becomes “Latest” again as usual. Each CV release description holds an invisible marker (`<!-- cv-studio {"cvId":…} -->`) that links it to the CV in the app.
+A new app version published by the release workflow becomes “Latest” again as usual. Each CV release description holds an invisible marker (`<!-- cv-studio {"cvId":…} -->`) that links it to the CV in the app.
 
 ### Project structure
 
@@ -167,10 +186,11 @@ src/
     sample-cv.json      Fictional sample CV shipped with the app
     template/           Stylesheet and script embedded in each CV
 scripts/check.mjs       Automatic checks
-scripts/release.mjs     Publishing a version
+scripts/release.mjs     Publishing a version: checks, then pushes the vX.Y.Z tag
+scripts/changelog-notes.mjs  Release notes taken from both changelogs
 test/                   Unit tests (node --test)
 build/                  App icon
-.github/workflows/      CI: checks and tests on every push
+.github/workflows/      CI (checks and tests on every push) and release (vX.Y.Z tags)
 ```
 
 ### How the CV engine works

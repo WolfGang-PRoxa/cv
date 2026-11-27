@@ -16,11 +16,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Prettier and ESLint, run by `npm run check` before the existing checks; `npm run format` and `npm run lint` scripts.
 - Unit tests (`npm test`, `node --test`) for shortcut detection, CV release tags and the sync merge.
 - GitHub CI running `npm run check` and `npm test` on every push and pull request.
+- Releases are built and published by GitHub Actions when a `vX.Y.Z` tag is pushed (`.github/workflows/release.yml`), with release notes taken from both changelogs (`scripts/changelog-notes.mjs`).
 
 ### Changed
 
 - All the code is formatted with Prettier.
 - Network errors re-thrown by GitHub publishing and sync keep the original error as their cause.
+- `npm run release` no longer builds the installer nor needs GitHub CLI: it checks the version, both changelogs and the tag, runs the checks and tests, then creates and pushes the `vX.Y.Z` tag.
+- Prettier accepts Windows line endings (`endOfLine: auto`), so `npm run check` passes on a Windows checkout.
 
 ### Removed
 
